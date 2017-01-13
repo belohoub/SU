@@ -66,11 +66,15 @@ endfor
     
     
 ########################################
-########## ??? ##########
+########## COMPUTE HYPOTHESIS ##########
 ########################################    
     
+# INITIALIZE THETA
+theta_vector = [1;1;1;1;1;1;1;1;1]
     
-    
+# CREATE LANDMARKS
+# NOMALIZE LANDAMRKS/X
+# COMPUTE KERNELS BY LIBSVM OR OTHER LIBRARY (KERNEL, EXP, SIMILARITY, ...)
     
     
     
