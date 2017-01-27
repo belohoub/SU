@@ -7,7 +7,7 @@ pkg load io
 
 # LOAD PREPROCESSED DATA titanic_preprocessing_2.csv FROM titanic.csv
 # !!!CHECK CORECT PATH!!!
-data = csv2cell('/home/dzejkob23/Documents/SU/titanic.csv');
+data = csv2cell('/home/dzejkob23/Documents/Git/SU/titanic.csv');
 
 
 ########################################
@@ -64,18 +64,39 @@ for i = 1:count
   endif
 endfor
     
+#########################################
+########## SCALE ALL SYMPTOMS ###########
+#########################################     
+    
+for i = 1:9
+  for j = 1:count
+    scaled_training_set(j,i) = training_set(j,i) / max(training_set(:,i));
+  endfor
+endfor    
     
 ########################################
-########## COMPUTE HYPOTHESIS ##########
+########## COMPUTE SIMILARITY ##########
 ########################################    
+
+# INITIALIZE THETA AND MATRIX OF SIMILARITY
+theta_vector = [1;1;1;1;1;1;1;1;1];
+# f = zeros (count, count, "uint8");
+
+# SIGMA
+sigma = 1;
+
+for i = 1:count
+  for j = 1:count
+    # sample X
+    x_1 = scaled_training_set(i,:);
+    # landmark
+    x_2 = scaled_training_set(j,:);
     
-# INITIALIZE THETA
-theta_vector = [1;1;1;1;1;1;1;1;1]
-    
+    # similarity of sample X is in ROW
+    f(i,j) = exp(-norm(x_1 - x_2)^2 / 2 * sigma^2);
+  endfor
+endfor
+
 # CREATE LANDMARKS
 # NOMALIZE LANDAMRKS/X
 # COMPUTE KERNELS BY LIBSVM OR OTHER LIBRARY (KERNEL, EXP, SIMILARITY, ...)
-    
-    
-    
-    
