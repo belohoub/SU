@@ -3,57 +3,71 @@
 ############################################
 # apt-get install liboctave-dev
 # pkg install -forge io
+
 pkg load io
+pkg load statistics
 
 # LOAD PREPROCESSED DATA titanic_preprocessing_2.csv FROM titanic.csv
 # !!!CHECK CORECT PATH!!!
-data = csv2cell('/home/dzejkob23/Documents/Git/SU/titanic.csv');
+# LINUX : data = csv2cell('/home/dzejkob23/Documents/Git/SU/titanic.csv');
+# WIN32 : data = csv2cell('D:\Git\SU\titanic.csv');
+
+data = csv2cell('D:\Git\SU\titanic.csv');
 
 #####################################
 ########## ADD SVM LIBRARY ##########
 #####################################
 
-# type "make" in ./libsvm-3.22/matlab
-# type => "addpath './libsvm-3.22/matlab'";
+# LINUX and WIN32 : type "make" in ./libsvm-3.22/matlab
+# LINUX : type => "addpath './libsvm-3.22/matlab'";
 
 ########################################
 ########## DATA PREPROCESSING ##########
 ########################################
 
+# ALONE FEATURES AND DROP IT FROM DATASET
+features = data(1,:);
+data(1,:) = [];
+
+# MAKE TEACJERS ANSWERS ALONE
+y = data(:,1);
+y = cell2mat(y);
+data(:,1) = [];
+
 # DROP NAMES - It's like ID's
-data(:,3) = [];
+data(:,2) = [];
 
 # DROP CABIN (missing 77% values)
-data(:,9) = [];
+data(:,8) = [];
 
 # TMP COUNT CELLS IN ONE COLUMN
-count = numel(data(:, 1));
+count = numel(y(:,1));
 
 # CONVERT MALE/FEMALE TO BINARY
-for i = 2:count
-  if (strcmpi(data(i, 3), 'female'))
-    data(i, 3) = 1;
+for i = 1:count
+  if (strcmpi(data(i, 2), 'female'))
+    data(i, 2) = 1;
   else
-    data(i, 3) = 0;
+    data(i, 2) = 0;
+  endif
+endfor
+
+# TICKET TO NUMBER
+for i = 1:count
+  tmp = cell2mat(data(i, 6));
+  if (!isnumeric(tmp))
+    data(i, 6) = sum(toascii(tmp));
   endif
 endfor
 
 # EMBARKED TO NUMBER
-for i = 2:count
-  data(i, 9) = sum(cell2mat (toascii(data(i, 9))));
-endfor
-
-# TICKET TO NUMBER
-for i = 2:count
-  tmp = cell2mat(data(i, 7));
-  if (!isnumeric(tmp))
-    data(i, 7) = sum(toascii(tmp));
-  endif
+for i = 1:count
+  data(i, 8) = sum(cell2mat (toascii(data(i, 8))));
 endfor
 
 # CONVERT TO NUMERIC MATRIX
-for i = 1:9
-  for j = 2:count
+for i = 1:8
+  for j = 1:count
     tmp = cell2mat(data(j, i));
     if (isnumeric(tmp))
       training_set(j,i) = tmp;
@@ -62,11 +76,11 @@ for i = 1:9
 endfor  
 
 # ADD MEAN TO MISSING VALUES IN AGE
-mean_age = mean(training_set(:,4));
+mean_age = mean(training_set(:,3));
 
 for i = 1:count
-  if (training_set(i, 4) == 0)
-    training_set(i, 4) = mean_age;
+  if (training_set(i, 3) == 0)
+    training_set(i, 3) = mean_age;
   endif
 endfor
     
@@ -74,7 +88,7 @@ endfor
 ########## SCALE ALL SYMPTOMS ###########
 #########################################     
     
-for i = 2:9
+for i = 1:8
   for j = 1:count
     scaled_training_set(j,i) = training_set(j,i) / max(training_set(:,i));
   endfor
@@ -111,12 +125,7 @@ endfor
 # when we use SVM with kernels, we have to
 # use vector of similarity f^(i) instead of
 # x^(i) from training set !!!
-
-# get answares from teacher
-answers_y = scaled_training_set(:,1);
-# drop answers from training set
-scaled_training_set (:,1) = [];
-
+#
 # Usage: model = svmtrain(training_label_vector, training_instance_matrix, 'libsvm_options');
 # libsvm_options:
 # -s svm_type : set type of SVM (default 0)
@@ -150,5 +159,5 @@ scaled_training_set (:,1) = [];
 # SVMStruct = svmtrain(answers_y,scaled_training_set,'['-s 3 -t 2 -c 1 -p 0.001 -g 1 -v 5']');
 
 # for radial with precomputed landmarks
-SVMStruct = svmtrain(answers_y, f_double, '['-s 2 -t 4 -nu 1 -e 0.001']');
+SVMStruct = svmtrain(y,scaled_training_set,'[-s 2 -t 4 -nu 1 -e 0.001]');
 
