@@ -108,6 +108,9 @@ endfor
 ##########################################
 ########## TRAINING WITH LIBSVM ##########
 ##########################################
+# when we use SVM with kernels, we have to
+# use vector of similarity f^(i) instead of
+# x^(i) from training set !!!
 
 # get answares from teacher
 answers_y = scaled_training_set(:,1);
@@ -145,4 +148,7 @@ scaled_training_set (:,1) = [];
 # EXAMPLES:
 # SVMStruct = svmtrain(answers_y,scaled_training_set);
 # SVMStruct = svmtrain(answers_y,scaled_training_set,'['-s 3 -t 2 -c 1 -p 0.001 -g 1 -v 5']');
+
+# for radial with precomputed landmarks
+SVMStruct = svmtrain(answers_y, f_double, '['-s 2 -t 4 -nu 1 -e 0.001']');
 
