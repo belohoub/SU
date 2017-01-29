@@ -87,10 +87,11 @@ endfor
 #########################################
 ########## SCALE ALL SYMPTOMS ###########
 #########################################     
-    
+
 for i = 1:8
   for j = 1:count
-    scaled_training_set(j,i) = training_set(j,i) / max(training_set(:,i));
+    max_feature(i) = max(training_set(:,i));
+    scaled_training_set(j,i) = training_set(j,i) / max_feature(i);
   endfor
 endfor    
     
