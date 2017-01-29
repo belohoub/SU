@@ -2,16 +2,23 @@
 ########## MAIN METHOD ##########
 #################################
 
-#sigma = 1;
+sigma = 1;
+C = 1;
 
-#fprintf('### Load data and prepare environment ...\n')
-#data = settings();
+data = settings();
+fprintf('### Load data and prepare environment ...\n');
 
-#fprintf('### Preprocessing ...\n')
-#[training_set, y, features, count] = preprocessing(data);
+fprintf('### Preprocessing ...\n');
+[scaledTrainingSet, y, countRow] = preprocessing(data);
 
-#fprintf('### Scaling data and create similarity matrix ...\n')
-#f_double = similarityMatrix(training_set,count, sigma);
+#fprintf('### Train via LIBSVM ...\nPress ENTER to continue ...\n');
+#pause();
+#SVMStruct = trainLibsvm(scaledTrainingSet, y);
 
-fprintf('### Train ...\n')
-#SVMStruct = train_libsvm(f_double, y);
+fprintf('### Train via MANUAL GAUSS KERNEL ...\nPress ENTER to continue ...\n');
+pause();
+model = trainManual(scaledTrainingSet, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma), 1e-3, 20);
+
+fprintf('### Compute statistics for training set ...\nPress ENTER to continue ...\n');
+pause();
+stats = statistics(model, y, scaledTrainingSet)

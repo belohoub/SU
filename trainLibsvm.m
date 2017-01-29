@@ -40,7 +40,7 @@
 
 # for radial with precomputed landmarks
 
-function SVMStruct = train_libsvm(f, y)
+function SVMStruct = trainLibsvm(f,y)
 
 SVMStruct = svmtrain(y,f,'[-s 2 -t 2 -g 2 -e 0.001]');
 

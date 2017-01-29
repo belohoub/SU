@@ -2,28 +2,29 @@
 ########## DATA PREPROCESSING ##########
 ########################################
 
-function [training_set, y, features, count] = preprocessing(data)
-  
-# ALONE FEATURES AND DROP IT FROM DATASET
-features = data(1,:);
+function [scaledTrainingSet, y, countRow] = preprocessing(data)
+
+# Alone features and drop it from data-set
+featuresOriginal = data(1,:);
 data(1,:) = [];
 
-# MAKE TEACJERS ANSWERS ALONE
+# Do teachers answers alone
 y = data(:,1);
 y = cell2mat(y);
 data(:,1) = [];
 
-# DROP NAMES - It's like ID's
+# Drop parameter NAME - It's like ID's
 data(:,2) = [];
 
-# DROP CABIN (missing 77% values)
+# Drop parameter CABIN - missing 77% values
 data(:,8) = [];
 
-# TMP COUNT CELLS IN ONE COLUMN
-count = numel(y(:,1));
+featuresMeasured = data(1,:);
+countRow = numel(y(:,1));
+countColumn = numel(featuresMeasured(1,:));
 
-# CONVERT MALE/FEMALE TO BINARY
-for i = 1:count
+# Convert MALE/FEMALE to BINARY
+for i = 1:countRow
   if (strcmpi(data(i, 2), 'female'))
     data(i, 2) = 1;
   else
@@ -31,36 +32,43 @@ for i = 1:count
   endif
 endfor
 
-# TICKET TO NUMBER
-for i = 1:count
+# TICKET to NUMBER
+for i = 1:countRow
   tmp = cell2mat(data(i, 6));
   if (!isnumeric(tmp))
     data(i, 6) = sum(toascii(tmp));
   endif
 endfor
 
-# EMBARKED TO NUMBER
-for i = 1:count
+# EMBARKED to NUMBER
+for i = 1:countRow
   data(i, 8) = sum(cell2mat (toascii(data(i, 8))));
 endfor
 
-# CONVERT TO NUMERIC MATRIX
-for i = 1:8
-  for j = 1:count
+# Convert to NUMERIC MATRIX
+for i = 1:countColumn
+  for j = 1:countRow
     tmp = cell2mat(data(j, i));
     if (isnumeric(tmp))
-      training_set(j,i) = tmp;
+      trainingSet(j,i) = tmp;
     endif
   endfor
 endfor  
 
-# ADD MEAN TO MISSING VALUES IN AGE
-mean_age = mean(training_set(:,3));
+# Add mean to missing values in parameter AGE
+meanAge = mean(trainingSet(:,3));
 
-for i = 1:count
-  if (training_set(i, 3) == 0)
-    training_set(i, 3) = mean_age;
+for i = 1:countRow
+  if (trainingSet(i, 3) == 0)
+    trainingSet(i, 3) = meanAge;
   endif
 endfor
+
+# Scale all values
+for i = 1:countColumn
+   maxFeature(i) = max(trainingSet(:,i));
+endfor  
+
+scaledTrainingSet = scale(trainingSet, countRow, countColumn, maxFeature);
 
 end

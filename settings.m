@@ -20,9 +20,12 @@ function [data] = settings()
 # Clean environment
 clear ; close all; clc
 
+# Load packages
 pkg load io
 pkg load statistics
+pkg load control
 
+# Path to LIBSVM
 addpath './libsvm-3.22/matlab'
 
 data = csv2cell('titanic.csv');
