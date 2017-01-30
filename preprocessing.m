@@ -2,7 +2,7 @@
 ########## DATA PREPROCESSING ##########
 ########################################
 
-function [scaledTrainingSet, y, countRow] = preprocessing(data)
+function [f_matrix, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma)
 
 # Alone features and drop it from data-set
 featuresOriginal = data(1,:);
@@ -70,5 +70,34 @@ for i = 1:countColumn
 endfor  
 
 scaledTrainingSet = scale(trainingSet, countRow, countColumn, maxFeature);
+
+# Compute similarity
+fprintf('\nSimilarity ...');
+dots = 12;
+
+for i = 1:countRow
+  for j = 1:countRow
+    # sample X
+    x1 = scaledTrainingSet(i,:);
+    # landmark
+    x2 = scaledTrainingSet(j,:);
+    
+    # similarity matrix
+    f_matrix(i,j) = gaussianKernel(x1, x2, sigma);
+  end
+  
+  fprintf('.');
+  dots = dots + 1;
+  if dots > 78
+      dots = 0;
+      fprintf('\n');
+  end
+  if exist('OCTAVE_VERSION')
+      fflush(stdout);
+  end
+  
+end
+
+fprintf(' Done! \n\n');
 
 end

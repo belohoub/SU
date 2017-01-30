@@ -2,9 +2,9 @@
 ########## COMPUTE STATISTICS ##########
 ########################################
 
-function [stats] = statistics(model, y, scaledTrainingSet)
+function [stats] = statistics(model, y, f_matrix)
   # Compute prediction for training set
-  prediction = predictManual(model, scaledTrainingSet(:,:));
+  prediction = predictManual(model, f_matrix);
   
   # Who survived in training set
   stats.sumY1 = sum(y(:));

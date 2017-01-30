@@ -1,3 +1,7 @@
+#######################################
+########## MANUAL PREDICTION ##########
+#######################################
+
 function pred = predictManual(model, X)
 %SVMPREDICT returns a vector of predictions using a trained SVM model
 %(svmTrain). 
