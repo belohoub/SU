@@ -73,7 +73,7 @@ scaledTrainingSet = scale(trainingSet, countRow, countColumn, maxFeature);
 
 # Compute similarity
 fprintf('\nSimilarity ...');
-dots = 12;
+dots = 15;
 
 for i = 1:countRow
   for j = 1:countRow

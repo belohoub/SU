@@ -1,0 +1,169 @@
+\documentclass[a4]{article}
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage{titlesec}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+\usepackage{relsize}
+
+\setlength{\parskip}{1em}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\titleformat{\section}
+{\normalfont\LARGE\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\Large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}
+{\normalfont\large\bfseries}{\thesubsubsection}{1em}{}
+\titleformat{\paragraph}[runin]
+{\normalfont\large\bfseries}{\theparagraph}{1em}{}
+\titleformat{\subparagraph}[runin]
+{\normalfont\large\bfseries}{\thesubparagraph}{1em}{}
+
+\title
+{
+\begin{figure}[h]
+\includegraphics[scale=0.5]{zcuLogo}
+\centering
+\end{figure}
+\textsc{\Huge{Semestrální práce}}\\*\LARGE{KIV-SU}\\\textbf{\huge{Strojové učení}}
+}
+
+\author{Jakub Zíka - A15N0087P\\zikaj@students.kiv.zcu.cz}
+\date{\today}
+
+\begin{document}
+\maketitle
+\newpage
+
+\tableofcontents{}
+\newpage
+
+\section{Zadání}
+Navrhněte téma zadání semestrální práce související s oblastí strojového učení. Cílem práce je prohloubit znalosti studenta v oblasti kognititvníchsystémů pomocí nabytých zkušeností ze semetrální práce.
+
+\subsection{Vybrané zadání}
+Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{SVM}, který bude skrze osobní údaje pasažérů lodi Titanic klasifikovat, zda daná osoba přežije či nepřežije potopení lodi. Dále se pokuste najít souvislosti mezi jednotlivými údaji o pasažérech a z nich zjistit či odvodit, které mají na přežití největší vliv.
+
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=\textwidth]{images/svm_vectors}
+	\caption{Maximální pás bez bodů trénovací množiny \cite{svm_vectors}}
+	\label{fig:svm_vectors}
+\end{figure}
+
+\section{Teoretický úvod}
+
+\subsection{Support Vector Machines}
+Algoritmy strojového se skládají z \textit{trénovací množiny} a \textit{rozhodovací hranice}. Rozhodovací hranici můžeme též nazývat \textit{hypotéza}. Trénovací množina může obsahovat i správné odpovědi. Algoritmy tedy dělíme na \textit{učení s učitelem} (máme odpovědi) a \textit{učení bez učitele} (nemáme odpovědi).
+\\\\
+Každý vzorek \textbf{x} trénovací množiny je tvořen množinou příznaků $${x_1,x_2,...x_n},$$kde \textit{n} je počet příznaků. Hypotéza má tvar \textit{h:x->y} což znamená, že hypotéza je zobrazení \textit{x} do \textit{y}. Hypotézu tvoří modelovací parametry $$\Theta_{n},$$které nám umožňují nastavit rozumnou rozhodovací hranici. Jejich hodnoty předem neznáme a získáme je trénováním.
+
+\subsubsection{Lineární rozhodovací hranice}
+Metoda strojového učení, která hledá v trénovací množině umístění optimální nadroviny. Tato nadrovina slouží k rozdělení bodů projekce na dvě třídy. V tomto rozdělení je požadováno aby minimum vzdáleností bodů od této nadroviny bylo co největší. Chceme tedy, aby nadrovina měla po obou stranách co nejširší pás bez bodů. K popisu těchto pásů slouží pomocné vektory (\textit{Support Vectors}) (viz Obr.:\ref{fig:svm_vectors}).
+\cite{svm_zcu}
+
+\subsubsection{Cenová funkce lineární hranice}
+Metoda SVM je vylepšenou verzí \textit{logistické regrese}. Ovšem, na rozdíl od cenové funkce logistické regrese nám SVM nevrací pravděpodobnost, ale rovnou příslušnost klasifikovaného vzorku k třídě 1 nebo 0. Zde vidíme \textit{cenovou funkci} logistické regrese:
+
+$$\min_{\theta} \frac{1}{m}[\sum_{i=1}^{m}y^{(i)}(-\log h_{\theta}(x^{(i)}))+(1-y^{(i)})(-\log(1-h_{\theta}(x^{(i)})))]+\frac{\lambda}{2m}\sum_{j=1}^{n}\theta_{j}^{2}$$
+
+Cenová funkce SVM pak vypadá následovně:
+
+$$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T x^{(i)})+(1-y^{(i)}) Cost_0 (\theta^T x^{(i)})] + \frac{1}{2} \sum_{j=1}^{n}\theta_{j}^{2},$$
+
+kde \textit{Cost} funkce pro y = 1 je
+
+$$\log\frac{1}{1 + e^{-\Theta^{T}x}}$$
+
+a funkce \textit{Cost} funkce pro y = 0 je
+
+$$\log(1-\frac{1}{1 + e^{-\Theta^{T}x}}).$$
+
+Optimalizací cenové funkce získáme hodnoty parametrů $\Theta$, které určují tvar hypotézy.
+\\\\
+Hodnota \textit{C} je regularizační faktor, který ovlivňuje výběr hypotézy. Rozumně vybraná hodnota pak umožní dělat ve výběru hypotézy kompromisy v extrémních případech rodělení tříd v trénovací množině:
+
+\begin{enumerate}
+	\item C - vysoké = malá odchylka, velký rozptyl (malá $\lambda$), hrozí \textit{overfitting}
+	\item C - malé = velká odchylka, malý rozptyl (velká $\lambda$), hrozí \textit{undefitting}
+\end{enumerate}
+
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=\textwidth]{images/linear_nonlinear}
+	\caption{Ukázka lineárně neseparabilních a separabilních dat.\cite{svm_wiki}}
+	\label{fig:linear_nonlinear}
+\end{figure}
+
+\subsubsection{Nelineární rozhodovací hranice}
+Máme-li trénovací množinu, pro kterou je rozhodovací hranice nelineární (viz. Obr.:\ref{fig:linear_nonlinear}), musíme použít metodu jader (\textit{Kernels}). Zavedeme si \textit{i} pomocných bodů tzv. \textit{landmarky}. Každý landmark $l^{(i)}$ nese hodnotu třídy, do které patří. Ke každému prvku $x^{(n)}$ trénovací množiny spočteme podobnost $f_{i}$ s každým landmarkem $l^{(i)}$. Pro každý prvek trénovací množiny tak dostaneme vektor podobnosti $f^{(n)}$. Podobnost počítáme následovně:
+
+$$f_{i}(x^{(n)},l^{(i)}) = exp(-\frac{||x^{(n)} - l^{(i)}||}{2\sigma^2})$$
+
+vektor podobnosti pak bude vypadat:
+
+$$f^{(n)} = [f_{1},f_{2},f_{3},...,f_{i}]$$
+
+Jádrem se nazývá funkce počítání podobnosti. V tomto případě je jádro \textit{Gaussové}. Parametr \textit{sigma} nám určuje míru podobnosti. Máme i jiné funkce jádra jako například \textit{Polynomiální} nebo \textit{Lineární}. Lineární jádro je předchozí případ lineárně separabilních dat.\cite{svm_robots},\cite{svm_wiki}
+
+\subsubsection{Cenová funkce nelineární hranice}
+Při použití gaussového jádra máme předpočítaný vektor podobnosti pro každý prvek trénovací množiny. To znamená, že vektor podobnosti může reprezentovat daný prvek trénovací množiny. Cenouvou funkci tedy můžeme pozměnit do tvaru:
+
+$$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T f^{(i)})+(1-y^{(i)}) Cost_0 (\theta^T f^{(i)})] + \frac{1}{2} \sum_{j=1}^{n}\theta_{j}^{2}$$
+
+Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými příznaky. Je dobré příznakový vektor nejdříve naškálovat a až poté počítat cenovou funkci.
+
+\newpage
+
+\section{Závěr}
+
+\appendix
+\begin{thebibliography}{99}
+
+\bibitem{svm_zcu}
+EKŠTEIN, Kamil. \textit{Support Vector Machines} [online]. Plzeň, 2012 [cit. 2017-01-31]. Dostupné z: \url{https://portal.zcu.cz/CoursewarePortlets2/DownloadDokumentu?id=123920}. Přednášky k předmětu Strojové učení. Západočeská univerzita v Plzni.
+
+\bibitem{andrew}
+NG, Andrew. \textit{CS229 Lecture notes - SVM} [online]. Standford, 2016 [cit. 2017-01-31]. Dostupné z: \url{http://cs229.stanford.edu/notes/cs229-notes3.pdf}. Přednášky k předmětu Machine Learning - CS229. Stanford University.
+
+\bibitem{andrew}
+NG, Andrew. \textit{Support Vector Machines} [online]. Standford, 2016 [cit. 2017-01-31]. Dostupné z: \url{https://d3c33hcgiwev3.cloudfront.net/_246c2a4e4c249f94c895f607ea1e6407_Lecture12.pdf?Expires=1485993600&Signature=MGhCSj6vnfSMVWpDERGUz8fc2312duxtjEpe2o4R0vhRA9KQQuPnZOPulQy5I0mCrICpxj3M0efelTXkmFFQsKB8VaVCYc0v7qPGH1pnWnL6WdQ1CEkpGAu~i3NfLItowu0Ge3C885eDXuSYBGmDGLUh83obXuukWx9ALN6J5yQ_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A}. Přednášky k předmětu Machine Learning. Stanford University.
+
+\bibitem{svm_wiki}
+Support vector machine. In: \textit{Wikipedia: the free encyclopedia} [online]. San Francisco (CA): Wikimedia Foundation, 2016 [cit. 2017-01-31]. Dostupné z: \url{https://cs.wikipedia.org/wiki/Support_vector_machines}.
+
+\bibitem{svm_robots}
+ZISSERMAN, Andrew. In: \textit{SVM dual, kernels and regression} [online]. Oxford, 2015 [cit. 2017-01-31]. Dostupné z: \url{http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf}.
+
+\end{thebibliography}
+
+\end{document}

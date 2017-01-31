@@ -20,7 +20,7 @@ fprintf('### Compute statistics for training set ...\nPress ENTER to continue ..
 pause();
 stats = statistics(model, y, f_matrix)
 
-fprintf('### Predict new value ...\n')
+fprintf('### Predict new value ...\nPress ENTER to continue ...\n');
 pause();
 
 # survived,pclass,name,sex,age,sibsp,parch,ticket,fare,cabin,embarked
@@ -40,7 +40,7 @@ example.embarked = 'C';
 exampleSimilarityVector = evaluateSample(example, maxFeature, scaledTrainingSet, sigma);
 
 # Prediction
-prediction = predictManual(model, exampleSimilarityVector);
+prediction = predictManual(model, exampleSimilarityVector)
 
 
 

@@ -6,6 +6,7 @@ function exampleSimilarityVector = evaluateSample(example, maxFeature, scaledTra
   
   # Prepare values to data structure
   examplePreprocessing = zeros(1,8);
+  
   examplePreprocessing(1) = example.pclass;
   
   if (strcmpi(example.sex, 'female'))
