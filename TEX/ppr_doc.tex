@@ -71,7 +71,21 @@
 Navrhněte téma zadání semestrální práce související s oblastí strojového učení. Cílem práce je prohloubit znalosti studenta v oblasti kognititvníchsystémů pomocí nabytých zkušeností ze semetrální práce.
 
 \subsection{Vybrané zadání}
-Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{SVM}, který bude skrze osobní údaje pasažérů lodi Titanic klasifikovat, zda daná osoba přežije či nepřežije potopení lodi. Dále se pokuste najít souvislosti mezi jednotlivými údaji o pasažérech a z nich zjistit či odvodit, které mají na přežití největší vliv.
+Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{SVM}, který bude skrze osobní údaje pasažérů lodi Titanic klasifikovat, zda daná osoba přežije či nepřežije potopení lodi. Dále se pokuste najít souvislosti mezi jednotlivými údaji o pasažérech a z nich zjistit či odvodit, které mají na přežití největší vliv. Data obsahují následující příznaky:
+
+\begin{enumerate}
+	\item survived : přežil/nepřežil (0=nepřežil, 1=přežil)
+	\item pclass : socio-ekonomická třída pasažéra (1=vyšší, 2=střední, 3=nižší)
+	\item name : jméno
+	\item sex : pohlaví
+	\item age : věk
+	\item sibsp : počet sourozenců, partnerů na palubě (příbuzní stejné generace)
+	\item parch : počet rodičů, dětí na palubě (příbuzní odlišné generace)
+	\item ticket : ID lístku
+	\item fare : cena lístku
+	\item cabin : číslo kajuty
+	\item embarked : přístav nalodění (C=Cherbourg, Q=Queenstown, S=Southampton)
+\end{enumerate}
 
 \begin{figure}[!ht]
 	\centering
@@ -142,9 +156,32 @@ $$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T f^{(i)})+(1-y^{(i)}) C
 
 Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými příznaky. Je dobré příznakový vektor nejdříve naškálovat a až poté počítat cenovou funkci.
 
+\subsection{Sequential minimal optimization (SMO)}
+???
+
+\section{Implementace}
+Výsledný program je naprogramovaný v matematickém jazyce Octave. Tuto variantu jsem zvolil z důvodu velkého množství matematických operací v úloze. Jelikož výsledný program slouží pouze k vyzkoušení dané problematiky, je tento jazyk optimální pro jeho realizaci.
+
+\subsection{Příprava dat}
+Před načtením dat jsem analyzoval jednotlivé příznaky všech prvků trénovací množiny pomocí programu \textit{Weka-3.8.1}.
+
+\subsubsection{Analýza a čištění}
+
+Po prozkoumání jednotlivých příznaků jsem zjistil, že sloupce \textit{embarked, cabin} a \textit{age} mají některá pole nevyplněná. V příznaku embarked chybí 2 hodnoty, proto je jednodušší tyto řádku smazat než vymýšlet postup nahrazení. Naopak příznaku cabin chybí 
+687 z 891, což je 77\%. Pokud bychom chtěli tyto mezery v datech nahradit například střední hodnotou nebo generátorem náhodných čísel, výsledné zkreslení hypotézy by bylo příliš velké a stala by se tato operace spíše nevýhodou. Proto sloupec cabin odstraníme úplně. Posledním příznakem s chybějícími hodnotami je age. Zde chybí 177 z 891, což je 20\%. To není zase tak mnoho, chybějící hodnoty nahradím střdními hodnotami příznaku. Výslednou hypotézu mi to může zkreslit, ale myslím si že ne tolik, jako by se tomu stalo v případě příznaku cabin.
+\\\\
+Příznak cabin bych odstranil i z jiného důvodu. Sice obsahuje pouze 147 hodnot, ale z toho je 101 unikátních. Pokud mám velké množství unikátních hodnot, výsledný sloupec mi poté slouží jako množina identifikátorů. Identifikátory do trénovací množiny nepřináší žádnou přidanou hodnotu a jsou tudíž zbytečné. Odstraním tedy i sloupec name, který je jednoznačným identifikátorem, protože má 100\% unikátních hodnot.
+
+\subsubsection{Konverze}
+Jelikož nejsou všechny příznaky 
+
 \newpage
 
 \section{Závěr}
+
+\section{Uživatelská příručka}
+
+\section{Testování}
 
 \appendix
 \begin{thebibliography}{99}
