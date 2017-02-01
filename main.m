@@ -2,11 +2,13 @@
 ########## MAIN METHOD ##########
 #################################
 
-sigma = 2;
-C = 5;
-
 data = settings();
 fprintf('### Load data and prepare environment ...\n');
+
+input ("Choose SIGMA: ");
+sigma = ans;
+input ("Choose C: ");
+C = ans;
 
 fprintf('### Preprocessing ...\nPress ENTER to continue ...\n');
 pause();

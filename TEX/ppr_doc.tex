@@ -19,7 +19,7 @@
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
 \lstset{frame=tb,
-  language=Java,
+  language=Octave,
   aboveskip=3mm,
   belowskip=3mm,
   showstringspaces=false,
@@ -89,7 +89,7 @@ Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{
 
 \begin{figure}[!ht]
 	\centering
-		\includegraphics[width=\textwidth]{images/svm_vectors}
+		\includegraphics[scale=0.25]{images/svm_vectors}
 	\caption{Maximální pás bez bodů trénovací množiny \cite{svm_vectors}}
 	\label{fig:svm_vectors}
 \end{figure}
@@ -143,11 +143,11 @@ Máme-li trénovací množinu, pro kterou je rozhodovací hranice nelineární (
 
 $$f_{i}(x^{(n)},l^{(i)}) = exp(-\frac{||x^{(n)} - l^{(i)}||}{2\sigma^2})$$
 
-vektor podobnosti pak bude vypadat:
+\noindent vektor podobnosti pak bude vypadat:
 
 $$f^{(n)} = [f_{1},f_{2},f_{3},...,f_{i}]$$
 
-Jádrem se nazývá funkce počítání podobnosti. V tomto případě je jádro \textit{Gaussové}. Parametr \textit{sigma} nám určuje míru podobnosti. Máme i jiné funkce jádra jako například \textit{Polynomiální} nebo \textit{Lineární}. Lineární jádro je předchozí případ lineárně separabilních dat.\cite{svm_robots},\cite{svm_wiki}
+\noindent Jádrem se nazývá funkce počítání podobnosti. V tomto případě je jádro \textit{Gaussové}. Parametr \textit{sigma} nám určuje míru podobnosti. Máme i jiné funkce jádra jako například \textit{Polynomiální} nebo \textit{Lineární}. Lineární jádro je předchozí případ lineárně separabilních dat.\cite{svm_robots},\cite{svm_wiki}
 
 \subsubsection{Cenová funkce nelineární hranice}
 Při použití gaussového jádra máme předpočítaný vektor podobnosti pro každý prvek trénovací množiny. To znamená, že vektor podobnosti může reprezentovat daný prvek trénovací množiny. Cenouvou funkci tedy můžeme pozměnit do tvaru:
@@ -161,25 +161,122 @@ Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými
 
 \section{Implementace}
 Výsledný program je naprogramovaný v matematickém jazyce Octave. Tuto variantu jsem zvolil z důvodu velkého množství matematických operací v úloze. Jelikož výsledný program slouží pouze k vyzkoušení dané problematiky, je tento jazyk optimální pro jeho realizaci.
+\\\\
+Program se spouští v hlavní části \texttt{main.m}. Hlavní část je pak rozdělena na \texttt{settings.m, preprocessing.m}, \texttt{trainManual.m}, \texttt{predictManual.m}, \texttt{statistics.m} a \texttt{evaluateSample.m}.
 
 \subsection{Příprava dat}
 Před načtením dat jsem analyzoval jednotlivé příznaky všech prvků trénovací množiny pomocí programu \textit{Weka-3.8.1}.
 
 \subsubsection{Analýza a čištění}
 
-Po prozkoumání jednotlivých příznaků jsem zjistil, že sloupce \textit{embarked, cabin} a \textit{age} mají některá pole nevyplněná. V příznaku embarked chybí 2 hodnoty, proto je jednodušší tyto řádku smazat než vymýšlet postup nahrazení. Naopak příznaku cabin chybí 
+Příprava prostředí, načtení a čištění dat probíhá v částech settings.m a preprocessing.m. Po prozkoumání jednotlivých příznaků jsem zjistil, že sloupce \textit{embarked, cabin} a \textit{age} mají některá pole nevyplněná. V příznaku embarked chybí 2 hodnoty, proto je jednodušší tyto řádku smazat než vymýšlet postup nahrazení. Naopak příznaku cabin chybí 
 687 z 891, což je 77\%. Pokud bychom chtěli tyto mezery v datech nahradit například střední hodnotou nebo generátorem náhodných čísel, výsledné zkreslení hypotézy by bylo příliš velké a stala by se tato operace spíše nevýhodou. Proto sloupec cabin odstraníme úplně. Posledním příznakem s chybějícími hodnotami je age. Zde chybí 177 z 891, což je 20\%. To není zase tak mnoho, chybějící hodnoty nahradím střdními hodnotami příznaku. Výslednou hypotézu mi to může zkreslit, ale myslím si že ne tolik, jako by se tomu stalo v případě příznaku cabin.
 \\\\
 Příznak cabin bych odstranil i z jiného důvodu. Sice obsahuje pouze 147 hodnot, ale z toho je 101 unikátních. Pokud mám velké množství unikátních hodnot, výsledný sloupec mi poté slouží jako množina identifikátorů. Identifikátory do trénovací množiny nepřináší žádnou přidanou hodnotu a jsou tudíž zbytečné. Odstraním tedy i sloupec name, který je jednoznačným identifikátorem, protože má 100\% unikátních hodnot.
 
 \subsubsection{Konverze}
-Jelikož nejsou všechny příznaky 
+Jelikož nejsou všechny příznaky číselné hodnoty, je nutné je konvertovat. Patří sem sloupce age, ticket a embarked. U sloupců ticket a embarked nevím, jaké jiné hodnoty se zde mohou vyskytovat, takže převod na určitou řadu čísel zde nejde použít. Znaky každé buňky tedy převedu podle \texttt{ASCII} tabulky na znaky a sečtu. Náhled konverze pro sloupec embraked:
+
+\begin{lstlisting}
+# preprocessing.m
+# line 43 
+# EMBARKED to NUMBER
+for i = 1:countRow
+  data(i, 8) = sum(cell2mat (toascii(data(i, 8))));
+endfor
+\end{lstlisting}
+
+\noindent Příznak sex lze konertovat tak, aby jsme z toho dostaly lepší hodnotu. Jelikož víme, že pohlaví u lidí jsou pouze dvě, převedeme hodnoty \texttt{male} a \texttt{female} na binární klasifikaci, tedy hodnoty 0 a 1. Převod vypadá následovně:
+
+\begin{lstlisting}
+# preprocessing.m
+# line 26 
+# Convert MALE/FEMALE to BINARY
+for i = 1:countRow
+  if (strcmpi(data(i, 2), 'female'))
+    data(i, 2) = 1;
+  else
+    data(i, 2) = 0;
+  endif
+endfor
+\end{lstlisting}
+
+\subsection{Trénování}
+\subsubsection{Škálování a matice podobnosti}
+Před trénováním jsou data ještě škálována aby se srazili rozdíly mezi jednotlivými příznaky a došlo tak ke správnému natrénování. Příznaky se škálují odečtením maxima příznaku přes všechny vzorky trénovací množiny.
+
+$$
+s_{n}^{i} = x_{n}^{i} - \max_{i} x_{n} \,;\, i \in <1;m>
+$$
+
+\noindent Kód škálování pak vypadá následovně:
+
+\begin{lstlisting}
+# scale.m
+# line 7 
+for i = 1:countColumn
+  for j = 1:countRow
+    scaledTrainingSet(j,i) = trainingSet(j,i) / maxFeature(i);
+  endfor
+endfor 
+\end{lstlisting}
+
+\noindent Před začátkem trénování vytvořím matici podobnosti $f$. Jako landmarky označím všechny prvky trénovací množiny. Matice podobnosti tedy bude obsahovat podobnost všech prvků trénovací množiny vůči ostatním prvkům. Matice $f$ bude symetrická. Kód pro výpočet podobnosti je kód gaussového jádra.
+
+\begin{lstlisting}
+# gaussianKernel.m
+# line 5
+function f = gaussianKernel(x1, x2, sigma)
+  f = exp(-norm(x1 - x2)^2 / 2 * sigma^2); 
+end
+\end{lstlisting}
+
+\subsubsection{Minimalizace cenové funkce}
+Samotné trénování probíhá v části \texttt{trainManual.m}.
+???
 
 \newpage
 
 \section{Závěr}
 
 \section{Uživatelská příručka}
+\subsubsection{Požadavky}
+Aby bylo možné program spustit, je nutné mít nainstalovaný program GNU Octave ve verzi 4.2.0.
+
+\subsubsection{Načtení dat}
+Program na načítá data ze souboru \textit{.csv}. Počítá také s tím, že data jsou ve stejné složce jako všechny potřebné moduly programu (*.m). Pokud jsou tedy data uloženy jinde, je nutné změnit cestu k souboru v modulu \texttt{settings.m} na řádce 25.
+
+\begin{lstlisting}
+# settings.m
+# line 25
+data = csv2cell('titanic.csv');
+\end{lstlisting}
+
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=\textwidth]{images/runWithGUI}
+	\caption{1. Nastavení cesty do složky programu, 2. Hlavní program (rozkliknout do záložky), 3. Spuštění programu}
+	\label{fig:runWithGUI}
+\end{figure}
+
+\subsubsection{Spuštění}
+Máme dvě možnosti spuštění:
+
+\begin{enumerate}
+	\item - Octave (GUI) : Máme-li Octave ve verzi s GUI, tak po spuštění programu navedeme Octave do správné složky s programem a spustíme modul \texttt{main.m} (viz Obr.:\ref{fig:runWithGUI})
+	\item - Octave (CLI) : Spouštíte-li Octave v příkazové řádce, je nutné se přesunout do složky programu s moduly a zadat pouze příkaz \texttt{main} (viz Obr.:\ref{fig:runWithoutGUI}.
+\end{enumerate}
+
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=\textwidth]{images/runWithoutGUI}
+	\caption{Spuštění Octave (CLI)}
+	\label{fig:runWithoutGUI}
+\end{figure}
+
+Dále už průběh pokračuje v obou prostředí stejně. Uživatel stiskem klávesy \texttt{ENTER} načtení a úpravu dat. Jakmile jsou data připravena, spustí se výpočet matice podobnosti indikovaný hláškou \texttt{Similarity ...}. Dokončení výpočtu je značeno hláškou \texttt{... Done!}. Následovně je uživatel vyzván k potvrzení trénování hypotézy. Chvilku se nic neděje, protože se matice podobnosti vektorizuje. Trénování začíná v okamžiku vyskočení hlášky \texttt{Training ...} a dokončení opět poznáme přes \texttt{... Done!}.
+\\\\
+Program tedy přejde k výpočtu statistik a zobrazí uživatel v procentech, jak moc hypotéza natrénovaná pomocí křížové validace.
 
 \section{Testování}
 
