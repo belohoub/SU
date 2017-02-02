@@ -24,22 +24,16 @@ function [model] = trainManual(X, Y, C, kernelFunction, ...
 %
 %
 
-if ~exist('tol', 'var') || isempty(tol)
-    tol = 1e-3;
-end
+# Get size of matrix
+# Columns
+m = numel(X(:,1));
+# Rows
+n = numel(X(1,:));
 
-if ~exist('max_passes', 'var') || isempty(max_passes)
-    max_passes = 5;
-end
-
-% Data parameters
-m = size(X, 1);
-n = size(X, 2);
-
-% Map 0 to -1
+# Change scale from <0;1> to <-1;1>
 Y(Y==0) = -1;
 
-% Variables
+# Variables
 alphas = zeros(m, 1);
 b = 0;
 E = zeros(m, 1);
@@ -54,27 +48,11 @@ H = 0;
 % 
 % We have implemented optimized vectorized version of the Kernels here so
 % that the svm training will run faster.
-if strcmp(func2str(kernelFunction), 'gaussianKernel')
-    % Vectorized RBF Kernel
-    % This is equivalent to computing the kernel on every pair of examples
-    X2 = sum(X.^2, 2);
-    K = bsxfun(@plus, X2, bsxfun(@plus, X2', - 2 * (X * X')));
-    K = kernelFunction(1, 0) .^ K;
-else
-    % Pre-compute the Kernel Matrix
-    % The following can be slow due to the lack of vectorization
-    K = zeros(m);
-    for i = 1:m
-        for j = i:m
-             K(i,j) = kernelFunction(X(i,:)', X(j,:)');
-             K(j,i) = K(i,j); %the matrix is symmetric
-        end
-    end
-end
 
 % Train
 fprintf('\nTraining ...');
 dots = 12;
+K = X;
 while passes < max_passes,
             
     num_changed_alphas = 0;
@@ -182,11 +160,11 @@ fprintf(' Done! \n\n');
 
 % Save the model
 idx = alphas > 0;
-model.X= X(idx,:);
-model.y= Y(idx);
+model.X = X;
+model.y = Y;
 model.kernelFunction = kernelFunction;
-model.b= b;
-model.alphas= alphas(idx);
+model.b = b;
+model.alphas = alphas;
 model.w = ((alphas.*Y)'*X)';
 
 end

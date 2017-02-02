@@ -27,6 +27,8 @@ function exampleSimilarityVector = evaluateSample(example, maxFeature, scaledTra
     examplePreprocessing(i) = examplePreprocessing(i) / maxFeature(i);
   end
   
+  examplePreprocessing = [ones(size(examplePreprocessing, 1), 1) examplePreprocessing];
+  
   # Compute similarity vector
   for i = 1:numel(scaledTrainingSet(:,1))
     exampleSimilarityVector(i) = gaussianKernel(examplePreprocessing, scaledTrainingSet(i,:), sigma);
