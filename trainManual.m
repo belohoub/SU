@@ -2,27 +2,7 @@
 ########## TRAINING WITH MANUAL KERNEL ##########
 #################################################
 
-function [model] = trainManual(X, Y, C, kernelFunction, ...
-                            tol, max_passes)
-%SVMTRAIN Trains an SVM classifier using a simplified version of the SMO 
-%algorithm. 
-%   [model] = SVMTRAIN(X, Y, C, kernelFunction, tol, max_passes) trains an
-%   SVM classifier and returns trained model. X is the matrix of training 
-%   examples.  Each row is a training example, and the jth column holds the 
-%   jth feature.  Y is a column matrix containing 1 for positive examples 
-%   and 0 for negative examples.  C is the standard SVM regularization 
-%   parameter.  tol is a tolerance value used for determining equality of 
-%   floating point numbers. max_passes controls the number of iterations
-%   over the dataset (without changes to alpha) before the algorithm quits.
-%
-% Note: This is a simplified version of the SMO algorithm for training
-%       SVMs. In practice, if you want to train an SVM classifier, we
-%       recommend using an optimized package such as:  
-%
-%           LIBSVM   (http://www.csie.ntu.edu.tw/~cjlin/libsvm/)
-%           SVMLight (http://svmlight.joachims.org/)
-%
-%
+function [model] = trainManual(X, Y, C, kernelFunction, tol, max_passes)
 
 # Get size of matrix
 # Columns
@@ -30,26 +10,23 @@ m = numel(X(:,1));
 # Rows
 n = numel(X(1,:));
 
-# Change scale from <0;1> to <-1;1>
+# Change answers from 0/1 to -1/1
 Y(Y==0) = -1;
 
 # Variables
-alphas = zeros(m, 1);
 b = 0;
 E = zeros(m, 1);
+# Lagranges multiplayers
+alphas = zeros(m, 1);
+# Iterations
 passes = 0;
+
 eta = 0;
+# Lower and Upper bound for alphas 
 L = 0;
 H = 0;
 
-% Pre-compute the Kernel Matrix since our dataset is small
-% (in practice, optimized SVM packages that handle large datasets
-%  gracefully will _not_ do this)
-% 
-% We have implemented optimized vectorized version of the Kernels here so
-% that the svm training will run faster.
-
-% Train
+# Train
 fprintf('\nTraining ...');
 dots = 12;
 K = X;
@@ -60,21 +37,32 @@ while passes < max_passes,
         
         % Calculate Ei = f(x(i)) - y(i) using (2). 
         % E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
+        
+        # f(x) = b + \sum \alpha_i y_i K(:, X_i) : "f(x) == Y(i)"
+        # E(i) = b + \sum \alpha_i y_i K(:, X_i) - Y(i)
+        #
         E(i) = b + sum (alphas.*Y.*K(:,i)) - Y(i);
         
+        # Conditions
+        #     \alpha_i = 0 "=>" y_i f(X_i) >= 1
+        # 0 < \alpha_i < C "=>" y_i f(X_i) = 1
+        #     \alpha_i = C "=>" y_i f(X_i) =< 1
+        #
         if ((Y(i)*E(i) < -tol && alphas(i) < C) || (Y(i)*E(i) > tol && alphas(i) > 0)),
             
-            % In practice, there are many heuristics one can use to select
-            % the i and j. In this simplified code, we select them randomly.
+            # Get random value => TOP/CEIL
+            # We can do this by heuristic too
             j = ceil(m * rand());
-            while j == i,  % Make sure i \neq j
+            while j == i,  # i != j
                 j = ceil(m * rand());
             end
 
-            % Calculate Ej = f(x(j)) - y(j) using (2).
+            # f(x) = b + \sum \alpha_j y_j K(:, X_j) : "f(x) == Y(j)"
+            # E(j) = b + \sum \alpha_j y_j K(:, X_j) - Y(j)
+            #
             E(j) = b + sum (alphas.*Y.*K(:,j)) - Y(j);
 
-            % Save old alphas
+            # Save old alphas
             alpha_i_old = alphas(i);
             alpha_j_old = alphas(j);
             
@@ -140,6 +128,8 @@ while passes < max_passes,
         
     end
     
+    # If alpha doesn't changed, passes++. "while" will be quit, if algorithm
+    # doesn't converge.
     if (num_changed_alphas == 0),
         passes = passes + 1;
     else
@@ -159,11 +149,7 @@ end
 fprintf(' Done! \n\n');
 
 % Save the model
-idx = alphas > 0;
-model.X = X;
 model.y = Y;
-model.kernelFunction = kernelFunction;
-model.b = b;
 model.alphas = alphas;
 model.w = ((alphas.*Y)'*X)';
 

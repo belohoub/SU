@@ -156,8 +156,80 @@ $$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T f^{(i)})+(1-y^{(i)}) C
 
 Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými příznaky. Je dobré příznakový vektor nejdříve naškálovat a až poté počítat cenovou funkci.
 
-\subsection{Sequential minimal optimization (SMO)}
-???
+\subsection{Sequential minimal optimization}
+SMO je algoritmus objevený Johnem Plattem v roce 1998. Tento algoritmus se osvědčil v SVM když jím nahradíme klasickou cenovou funkci. Za pomoci \textit{Lagrangoevých multiplikátorů} můžeme říct, že $\theta(\alpha)=\sum_{i}\alpha_{i}y_{i}z_{i}$, kde $\alpha_i$ jsou Lagrangeovy multiplikátory a $z_{i}=\phi(x_{i})$.
+\\\\
+Platt toto vylepšení poté využije jako:
+$$
+F_i =w(\alpha) . z_i - y_i = \sum_{j}\alpha_{j}y_{j}k(x_i,x_j)-y_{i},
+$$
+kde $k(x_i,x_j)$ je jádro. Dostáváme tvar parciální derivace:
+$$
+L = \frac{1}{2}w(\alpha).w(\alpha)-\sum_{i}\alpha_{i}-\sum_{i}\alpha_{i}\delta_{i}+\sum_{i}\mu_{i}(\alpha_{i}-C)-\beta\sum_{i}\alpha_{i}y_{i}
+$$
+$$
+\frac{\partial L}{\partial \alpha_{i}}=(F_{i}-\beta)y_{i}-\delta_{i}+\mu_{i}=0
+$$
+Podle \textit{Karush-Kuhn-Tucker (KKT)} dostaneme podmínky, které musí daný výraz splňovat:
+$$
+(F_i-\beta)y_{i}>=-\tau => \alpha_{i} = 0
+$$
+$$
+|(F_i-\beta)|<=\tau => 0 < \alpha_{i} < C
+$$
+$$
+(F_i-\beta)y_{i}<=\tau => \alpha_{i} = C
+$$
+Platt poté definuje výstupní chybu i-tého prvku jako:
+$$
+E_{i} = F_{i} - \beta,
+$$
+kde $\beta$ je prahový paramter. V Plattově pseudokódu po určení chyby vybíráme dva indexy $i_1$ a $i_2$ pro výběr multiplikátorů $\alpha_{i_1}$ a $\alpha_{i_2}$. Metody, jak správně vybrat indexy, jsou popsány v originálním článku z roku 1998. Celý algoritmu tedy funguje ve dvou smyčkách. Vnější smyčka vybírá index $i_2$ a pro index $i_2$ vybírá vnitřní smyčka index $i_1$.
+\\\\
+Vnější smyčka jde přes všechny prvky trénovací množiny, které narušily podmínky optimality. Nejprve pouye přes ty, které nanerušili horní ani dolní hranici. Každém průběhu, je-li to vyžadováno, je chyba $E_i$ aktualizována.\cite{smo_platt},\cite{andrew}
+
+\noindent Dále je nutné si spočítat horní a dolní hranici. Pokud se $y_{i_1}$ nerovná $y_{i_2}$ pak:
+$$
+L=max(0,\alpha_2 - \alpha_1) ; H=min(C, C+\alpha_2 - \alpha_1)
+$$
+jinak:
+$$
+L=max(0,\alpha_2 + \alpha_1 - C) ; H=min(C, \alpha_2 + \alpha_1)
+$$
+
+\noindent Druhá derivace cílové funkce podél diagonály může být vyjádřena jako:
+
+$$
+\eta=K(\vec{x_1},\vec{x_1}) + K(\vec{x_2},\vec{x_2}) -2K(\vec{x_1},\vec{x_2})
+$$
+
+\noindent Za normálních okolností bude cílová funkce pozitivně definitní, bude existovat
+minimum ve směru lineárního omezení rovnosti, a $\eta$ bude větší než nula. V
+tomto případě, SMO vypočítá minimum ve směru omezení:
+
+$$
+\alpha_{2}^{new,cliped} = \alpha_{2}+\frac{y_{2}(E_{1}-E_{2})}{\eta}
+$$
+
+\noindent Teď si vyjádříme $s=y_{1}y_{2}$. Potom se $\alpha_1$ počítá:
+
+$$
+\alpha_{1}^{new}=\alpha_{1}+s(\alpha_{2}-\alpha_{2}^{new,clipped}).
+$$
+
+\noindent Dále si musíme vytvořit vzorce pro výpočet prahu. Práh $b$ je počítán po každém provedeném vnitřním cyklu. Celkový práh je složen z $b_1$, který  je ovlivněn chybou $E_1$, a $b_2$, který je ovlivněn chybou $E_2$. Následující práh $b_1$ je platný, pokud nová $\alpha_{1}$ není v mezích, protože nutí výstup z SVM být $y_1$, když vstup je $x_1$:
+
+$$
+b_1=E_1+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_1})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_1},\vec{x_2})+b.
+$$
+
+\noindent Předchozí trvrzení pro $b_1$ platí i pro $b_2$. Následující práh $b_2$ je platný, pokud nová $\alpha_{2}$ není v mezích, protože nutí výstup z SVM být $y_2$, když vstup je $x_2$:
+
+$$
+b_2=E_2+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_2})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_2},\vec{x_2})+b.
+$$
+
+\noindent Pokud oba $b_1$ i $b_2$ jsou platné, jsou si rovny. Když oba nové Lagrangeovy multiplikátory jsou v mezích a pokud L není rovno H, pak se interval mezi $b_1$ a $b_2$ je práh, který je v souladu s podmínkami KKT. SMO zvolí prahovou hodnotu polovinou vzdálenosti mezi $b_1$ a $b_2$.\cite{smo_platt_original}
 
 \section{Implementace}
 Výsledný program je naprogramovaný v matematickém jazyce Octave. Tuto variantu jsem zvolil z důvodu velkého množství matematických operací v úloze. Jelikož výsledný program slouží pouze k vyzkoušení dané problematiky, je tento jazyk optimální pro jeho realizaci.
@@ -232,8 +304,28 @@ end
 \end{lstlisting}
 
 \subsubsection{Minimalizace cenové funkce}
-Samotné trénování probíhá v části \texttt{trainManual.m}.
-???
+Samotné trénování probíhá v části \texttt{trainManual.m}. Na začátku proběhne nastavení proměnných a změna odpovědí učitele z 0/1 na -1/1. Dává nám to širší rozhodovací pásmo. Učení pak probíhá ve dvou cyklech, vnitřním (pracuje s j-tým prvkem) a vnějším (pracuje s i-tým prvkem). V obou cyklech se počítají výstupní chyby i/j-tého prvku. Ve vnějším se i generuje iteračně přes \texttt{for i = 1:m}, kde \texttt{m} je velikost trénovací množiny, ve vnitřním je výběr j-tého prvku realizován náhodou:
+
+\begin{lstlisting}
+# trainManual.m
+# line 55
+j = ceil(m * rand());
+while j == i,
+  j = ceil(m * rand());
+end
+\end{lstlisting}
+
+Dále si podle vzorců z \cite{smo_platt_original} spočítám hodnoty \texttt{L, H, eta, b, b1, b2} a \texttt{alphas}. Zastavovací podmínka se řídí parametrem \texttt{passes}. Pokud se po průběhum celým vnějším cyklem \texttt{for i = 1:m} nezmění žádný z parametrů \texttt{alphas}, zvedne se hodnota proměnné \texttt{num\_changed\_alphas} o 1. Jakmile je splněna podmínka $passes < max_passes$, trénování končí a přejde se k zápisu výsledků trénování do proměnné \texttt{model}. Zápis výsledků:
+
+\begin{lstlisting}
+# trainManual.m
+# line 153
+model.y = Y;
+model.alphas = alphas;
+model.w = ((alphas.*Y)'*X)';
+\end{lstlisting}
+
+V modelu hodnota \texttt{model.Y} představuje odpovědi učitele. Hodnota \texttt{model.alphas} je podle teorie $\alpha_i$, což jsou Lagrangeovi multiplikátory. Pole \texttt{model.w} jsou pro nás hodnoty modelovacích parametrů $\Theta$.
 
 \newpage
 
@@ -297,6 +389,13 @@ Support vector machine. In: \textit{Wikipedia: the free encyclopedia} [online]. 
 
 \bibitem{svm_robots}
 ZISSERMAN, Andrew. In: \textit{SVM dual, kernels and regression} [online]. Oxford, 2015 [cit. 2017-01-31]. Dostupné z: \url{http://www.robots.ox.ac.uk/~az/lectures/ml/lect3.pdf}.
+
+\bibitem{smo_platt}
+KEERTHI,S.S.;SHEVADE,S. K.;BHATTACHARYYA,C.;MURTHY,K.R.K.. \textit{Improvements to Platt’s SMO Algorithm for SVM Classifier
+Design} [online]. Singapore, 2000 [cit. 2017-02-03]. Dostupné z: \url{http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.115.5266&rep=rep1&type=pdf}.
+
+\bibitem{smo_platt_original}
+PLATT, John C.. \textit{Sequential Minimal Optimization} [online]. Microsoft Research, 1998 [cit. 2017-02-03]. Dostupné z: \url{https://pdfs.semanticscholar.org/8b5e/ab2c9fefe2fb1cc15e755cf7382ffc638f7c.pdf}. A Fast Algorithm for Training Support Vector Machines - Microsoft Research.
 
 \end{thebibliography}
 
