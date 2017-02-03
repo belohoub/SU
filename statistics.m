@@ -2,9 +2,7 @@
 ########## COMPUTE STATISTICS ##########
 ########################################
 
-function [stats] = statistics(model, y, f)
-  # Compute prediction for training set
-  prediction = predictManual(model, f);
+function [stats] = statistics(prediction, y)
   
   # Who survived in training set
   stats.sumY1 = sum(y(:));
@@ -15,8 +13,8 @@ function [stats] = statistics(model, y, f)
   prediction(y(:)==prediction(:)) = 1;
   
   # Count of equal rows
-  stats.similarRowsPredictAndY = sum(prediction(:));
+  stats.similarRowsPredictAndY = sum(prediction);
   # How much percents were predicted right
-  stats.similarPercent = 100 / numel(y) * stats.similarRowsPredictAndY;
+  stats.similarPercent = 100 / (y) * stats.similarRowsPredictAndY;
   
 end

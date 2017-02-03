@@ -14,7 +14,7 @@
 \contentsline {subsubsection}{\numberline {3.1.2}Konverze}{11}{subsubsection.3.1.2}
 \contentsline {subsection}{\numberline {3.2}Tr\IeC {\'e}nov\IeC {\'a}n\IeC {\'\i }}{12}{subsection.3.2}
 \contentsline {subsubsection}{\numberline {3.2.1}\IeC {\v S}k\IeC {\'a}lov\IeC {\'a}n\IeC {\'\i } a matice podobnosti}{12}{subsubsection.3.2.1}
-\contentsline {subsubsection}{\numberline {3.2.2}Minimalizace cenov\IeC {\'e} funkce}{12}{subsubsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.2}Minimalizace cenov\IeC {\'e} funkce}{13}{subsubsection.3.2.2}
 \contentsline {subsection}{\numberline {3.3}Predikce}{13}{subsection.3.3}
 \contentsline {section}{\numberline {4}Z\IeC {\'a}v\IeC {\v e}r}{14}{section.4}
 \contentsline {section}{\numberline {5}U\IeC {\v z}ivatelsk\IeC {\'a} p\IeC {\v r}\IeC {\'\i }ru\IeC {\v c}ka}{14}{section.5}

@@ -2,48 +2,36 @@
 ########## MAIN METHOD ##########
 #################################
 
+# Reset and data loading
 data = settings();
 fprintf('### Load data and prepare environment ...\n');
-
+# Input SIGMA
 input("Choose SIGMA: ");
 sigma = ans;
+# Input C
 input("Choose C: ");
 C = ans; 
+# Input size of TRAINING SET
+fprintf("Split data to training set and validation set!\n");
+input("Choose size of training se in \'%\':");
+sizeOfTrainingSet = ans;
 
+########## PREPROCESSING
 fprintf('### Preprocessing ...\nPress ENTER to continue ...\n');
-pause();
-[f, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma);
-
-fprintf('### Train via MANUAL GAUSS KERNEL ...\nPress ENTER to continue ...\n');
-pause();
-model = trainManual(f, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma), 1e-3, 20);
-
-fprintf('### Compute statistics for training set ...\nPress ENTER to continue ...\n');
-pause();
-stats = statistics(model, y, f)
-
-#fprintf('### Predict new value ...\nPress ENTER to continue ...\n');
 #pause();
+[fTraining, fValidation, trainingY, validationY] = preprocessing(data, sigma, sizeOfTrainingSet);
 
-# survived,pclass,name,sex,age,sibsp,parch,ticket,fare,cabin,embarked
-#example.survived = 1;
-#example.pclass = 1;
-#example.name = 'Cumings, Mrs. John Bradley (Florence Briggs Thayer)';
-#example.sex = 'female';
-#example.age = 38;
-#example.sibsp = 1;
-#example.parch = 0;
-#example.ticket = 'PC 17599';
-#example.fare = 71.2833;
-#example.cabin = 'C85';
-#example.embarked = 'C';
+########## TRAINING
+fprintf('### Train via GAUSS KERNEL ...\nPress ENTER to continue ...\n');
+#pause();
+model = trainManual(fTraining, trainingY, C, @(x1, x2) gaussianKernel(x1, x2, sigma), 1e-3, 20);
 
-# Sample
-#exampleSimilarityVector = evaluateSample(example, maxFeature, scaledTrainingSet, sigma);
+########## PREDICTION
+fprintf('### Compute prediction ...\nPress ENTER to continue ...\n');
+#pause();
+prediction = predictManual(model, fValidation);
 
-# Prediction
-#prediction = predictManual(model, exampleSimilarityVector)
-
-
-
-
+########## STATISTICS
+fprintf('### Compute statistics for training set ...\nPress ENTER to continue ...\n');
+#pause();
+stats = statistics(prediction, validationY)

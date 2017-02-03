@@ -35,12 +35,7 @@ while passes < max_passes,
     num_changed_alphas = 0;
     for i = 1:m,
         
-        % Calculate Ei = f(x(i)) - y(i) using (2). 
-        % E(i) = b + sum (X(i, :) * (repmat(alphas.*Y,1,n).*X)') - Y(i);
-        
-        # f(x) = b + \sum \alpha_i y_i K(:, X_i) : "f(x) == Y(i)"
-        # E(i) = b + \sum \alpha_i y_i K(:, X_i) - Y(i)
-        #
+        # Calculate Ei = output error of i-th sample 
         E(i) = b + sum (alphas.*Y.*K(:,i)) - Y(i);
         
         # Conditions
@@ -57,16 +52,14 @@ while passes < max_passes,
                 j = ceil(m * rand());
             end
 
-            # f(x) = b + \sum \alpha_j y_j K(:, X_j) : "f(x) == Y(j)"
-            # E(j) = b + \sum \alpha_j y_j K(:, X_j) - Y(j)
-            #
+            # Calculate Ei = output error of j-th sample
             E(j) = b + sum (alphas.*Y.*K(:,j)) - Y(j);
 
             # Save old alphas
             alpha_i_old = alphas(i);
             alpha_j_old = alphas(j);
             
-            % Compute L and H by (10) or (11). 
+            # Compute L and H
             if (Y(i) == Y(j)),
                 L = max(0, alphas(j) + alphas(i) - C);
                 H = min(C, alphas(j) + alphas(i));
@@ -75,37 +68,34 @@ while passes < max_passes,
                 H = min(C, C + alphas(j) - alphas(i));
             end
            
-            if (L == H),
-                % continue to next i. 
+            # If L eq H, go on next i
+            if (L == H), 
                 continue;
             end
 
-            % Compute eta by (14).
+            # Compute ETA
             eta = 2 * K(i,j) - K(i,i) - K(j,j);
-            if (eta >= 0),
-                % continue to next i. 
+            if (eta >= 0), 
                 continue;
             end
             
-            % Compute and clip new value for alpha j using (12) and (15).
+            # Compute and clip new value for alpha(j) using
             alphas(j) = alphas(j) - (Y(j) * (E(i) - E(j))) / eta;
             
-            % Clip
+            # Clip
             alphas(j) = min (H, alphas(j));
             alphas(j) = max (L, alphas(j));
             
-            % Check if change in alpha is significant
+            # Check if change in alpha is significant
             if (abs(alphas(j) - alpha_j_old) < tol),
-                % continue to next i. 
-                % replace anyway
                 alphas(j) = alpha_j_old;
                 continue;
             end
             
-            % Determine value for alpha i using (16). 
+            # Determine value for alpha(i) 
             alphas(i) = alphas(i) + Y(i)*Y(j)*(alpha_j_old - alphas(j));
             
-            % Compute b1 and b2 using (17) and (18) respectively. 
+            # Compute b1 and b2
             b1 = b - E(i) ...
                  - Y(i) * (alphas(i) - alpha_i_old) *  K(i,j)' ...
                  - Y(j) * (alphas(j) - alpha_j_old) *  K(i,j)';
@@ -113,7 +103,7 @@ while passes < max_passes,
                  - Y(i) * (alphas(i) - alpha_i_old) *  K(i,j)' ...
                  - Y(j) * (alphas(j) - alpha_j_old) *  K(j,j)';
 
-            % Compute b by (19). 
+            # Compute b
             if (0 < alphas(i) && alphas(i) < C),
                 b = b1;
             elseif (0 < alphas(j) && alphas(j) < C),
@@ -148,7 +138,7 @@ while passes < max_passes,
 end
 fprintf(' Done! \n\n');
 
-% Save the model
+# Save result to the MODEL
 model.y = Y;
 model.alphas = alphas;
 model.w = ((alphas.*Y)'*X)';

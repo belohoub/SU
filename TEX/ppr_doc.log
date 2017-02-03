@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/W32TeX) (preloaded format=pdflatex 2017.1.30)  3 FEB 2017 16:27
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016/W32TeX) (preloaded format=pdflatex 2017.1.30)  3 FEB 2017 20:50
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -832,16 +832,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 253--256
 
  []
 
-[11]
-Overfull \hbox (2.92404pt too wide) in paragraph at lines 291--292
-\OT1/cmr/m/n/10 P^^Tred za^^Tc^^Satkem tr^^Senov^^San^^S^^P vy-tvo^^Tr^^S^^Pm m
-a-tici po-dob-nosti \OT1/cmtt/m/n/10 f\OT1/cmr/m/n/10 . Jako lan-d-marky ozna^^
-Tc^^S^^Pm
- []
-
-[12]
-Overfull \hbox (6.50412pt too wide) in paragraph at lines 323--324
-\OT1/cmr/m/n/10 V mo-delu hod-nota \OT1/cmtt/m/n/10 model.Y \OT1/cmr/m/n/10 p^^
+[11] [12]
+Overfull \hbox (6.50522pt too wide) in paragraph at lines 323--324
+\OT1/cmr/m/n/10 V mo-delu hod-nota \OT1/cmtt/m/n/10 model.y \OT1/cmr/m/n/10 p^^
 Tredstavuje od-pov^^Tedi u^^Tcitele. Hod-nota \OT1/cmtt/m/n/10 model.alphas
  []
 
@@ -882,19 +875,19 @@ Package hyperref Warning: Composite letter `\textasciicaron+e'
 (hyperref)                not defined in PD1 encoding,
 (hyperref)                removing `\textasciicaron' on input line 359.
 
-
+[14]
 Overfull \hbox (8.72278pt too wide) in paragraph at lines 364--365
 []\OT1/cmr/m/n/10 - Octave (CLI) : Spou^^Tst^^S^^Pme-li Octave v p^^Tr^^S^^Pkaz
 ov^^Se ^^Tr^^Sadce, je nutn^^Se se p^^Tresunout
  []
 
-<images/runWithoutGUI.png, id=268, 457.71pt x 224.33812pt>
+<images/runWithoutGUI.png, id=282, 457.71pt x 224.33812pt>
 File: images/runWithoutGUI.png Graphic file (type png)
 
 <use images/runWithoutGUI.png>
 Package pdftex.def Info: images/runWithoutGUI.png used on input line 369.
 (pdftex.def)             Requested size: 345.0pt x 169.1021pt.
- [14]
+
 Overfull \hbox (3.70132pt too wide) in paragraph at lines 374--377
 \OT1/cmr/m/n/10 zen^^S^^P tr^^Senov^^San^^S^^P hy-pot^^Sezy. Tr^^Senov^^San^^S^
 ^P za^^Tc^^S^^Pn^^Sa v okam^^Tziku vy-sko^^Tcen^^S^^P hl^^Sa^^Tsky \OT1/cmtt/m/
@@ -906,13 +899,13 @@ Underfull \hbox (badness 10000) in paragraph at lines 374--377
 
  []
 
-
+[15 <./images/runWithGUI.png> <./images/runWithoutGUI.png>]
 Underfull \hbox (badness 3417) in paragraph at lines 382--383
 \OT1/cmr/m/n/10 01-31]. Do-stupn^^Se z: []$\OT1/cmtt/m/n/10 https : / / portal 
 . zcu . cz / CoursewarePortlets2 /
  []
 
-[15 <./images/runWithGUI.png> <./images/runWithoutGUI.png>]
+
 Underfull \hbox (badness 5519) in paragraph at lines 385--386
 \OT1/cmr/m/n/10 [cit. 2017-01-31]. Do-stupn^^Se z: []$\OT1/cmtt/m/n/10 http : /
  / cs229 . stanford . edu / notes /
@@ -993,8 +986,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 401--402
  A Fast Al-go-ri-thm
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 405.
 [16]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 405.
+ [17]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 405.
  (./ppr_doc.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 405.
@@ -1004,9 +998,9 @@ Package rerunfilecheck Info: File `ppr_doc.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 405.
  ) 
 Here is how much of TeX's memory you used:
- 9378 strings out of 493013
- 128956 string characters out of 6132862
- 267365 words of memory out of 5000000
+ 9379 strings out of 493013
+ 128963 string characters out of 6132862
+ 268365 words of memory out of 5000000
  12713 multiletter control sequences out of 15000+600000
  11219 words of font info for 41 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1028,10 +1022,10 @@ ograms/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><d:/Pro
 grams/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb><d:/Pro
 grams/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><d:/Pro
 grams/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on ppr_doc.pdf (16 pages, 582944 bytes).
+Output written on ppr_doc.pdf (17 pages, 583542 bytes).
 PDF statistics:
- 395 PDF objects out of 1000 (max. 8388607)
- 346 compressed objects within 4 object streams
- 109 named destinations out of 1000 (max. 500000)
+ 401 PDF objects out of 1000 (max. 8388607)
+ 351 compressed objects within 4 object streams
+ 110 named destinations out of 1000 (max. 500000)
  207 words of extra memory for PDF output out of 10000 (max. 10000000)
 

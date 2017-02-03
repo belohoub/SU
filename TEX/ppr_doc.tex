@@ -243,7 +243,7 @@ $$
 \section{Implementace}
 Výsledný program je naprogramovaný v matematickém jazyce Octave. Tuto variantu jsem zvolil z důvodu velkého množství matematických operací v úloze. Jelikož výsledný program slouží pouze k vyzkoušení dané problematiky, je tento jazyk optimální pro jeho realizaci.
 \\\\
-Program má hlavní část \texttt{main.m}. Ta je pak rozdělena na \texttt{settings.m, preprocessing.m}, \texttt{trainManual.m}, \texttt{predictManual.m}, \texttt{statistics.m} a \texttt{evaluateSample.m}.
+Program má hlavní část \texttt{main.m}. Ta je pak rozdělena na \texttt{settings.m, preprocessing.m}, \texttt{trainManual.m}, \texttt{predictManual.m} a \texttt{statistics.m}.
 
 \subsection{Příprava dat}
 Před načtením dat jsem analyzoval jednotlivé příznaky všech prvků trénovací množiny pomocí programu \textit{Weka-3.8.1}.
@@ -270,13 +270,13 @@ endfor
 
 \subsection{Trénování}
 \subsubsection{Škálování a matice podobnosti}
-Před trénováním jsou data ještě škálována aby se srazili rozdíly mezi jednotlivými příznaky a došlo tak ke správnému natrénování. Příznaky se škálují odečtením maxima příznaku přes všechny vzorky trénovací množiny
+Před trénováním jsou data ještě škálována aby se srazili rozdíly mezi jednotlivými příznaky a došlo tak ke správnému natrénování. Ještě dříve jsou data rozdělena podle uživatelem zadaného poměru. Škálují se tedy dvě matice, jedna tránovací \texttt{scaleTrainingSet} a druhá validační \texttt{scaledValidationSet}. Příznaky se škálují odečtením maxima příznaku přes všechny vzorky trénovací množiny
 
 $$
 s_{n}^{i} = x_{n}^{i} - \max_{i} x_{n} \,;\, i \in <1;m>.
 $$
 
-\noindent Kód škálování pak vypadá následovně:
+\noindent Matice \texttt{scaledValidationSet} je škálována podle maximálních hodnot\\\texttt{scaleTrainingSet} matice. Kód škálování pak vypadá následovně:
 
 \begin{lstlisting}
 # scale.m
@@ -288,7 +288,7 @@ for i = 1:countColumn
 endfor 
 \end{lstlisting}
 
-\noindent Před začátkem trénování vytvořím matici podobnosti \texttt{f}. Jako landmarky označím všechny prvky trénovací množiny. Matice podobnosti tedy bude obsahovat podobnost všech prvků trénovací množiny vůči ostatním prvkům. Matice \texttt{f} bude symetrická. Kód pro výpočet podobnosti je kód gaussového jádra.
+\noindent Jako landmarky označím všechny prvky trénovací množiny. Matice podobnosti tedy bude obsahovat podobnost všech prvků trénovací množiny vůči ostatním prvkům. Matice \texttt{scaleTrainingSet} bude symetrická. Kód pro výpočet podobnosti je kód gaussového jádra.
 
 \begin{lstlisting}
 # gaussianKernel.m
@@ -310,7 +310,7 @@ while j == i,
 end
 \end{lstlisting}
 
-\noindent Dále si podle vzorců z \cite{smo_platt_original} spočítám hodnoty \texttt{L, H, eta, b, b1, b2} a \texttt{alphas}. Hodnoty \texttt{L,H} jsou horní a dolní pásmo. Parametr \texttt{eta} je $\eta$ a značí výpočet druhé derivace funkce. Hodnoty \texttt{b,b1,b2} jsou $\beta, \beta_1, \beta_2$ a slouží k výpočtu prahové hodnoty. Hodnoty vektoru \texttt{alphas} jsou $\vec{\alpha}$ a slouží k výpočtu Lagrangeových multiplikátorů. Zastavovací podmínka se řídí parametrem \texttt{passes}. Pokud se po průběhum celým vnějším cyklem \texttt{for i = 1:m} nezmění žádný z parametrů \texttt{alphas}, zvedne se hodnota proměnné \texttt{num\_changed\_alphas} o 1. Jakmile je splněna podmínka $passes < max\_passes$, trénování končí a přejde se k zápisu výsledků trénování do proměnné \texttt{model}. Zápis výsledků:
+\noindent Dále si podle vzorců z \cite{smo_platt_original} spočítám hodnoty potřebné k výpočtu rozhodovací hranice. Hodnoty \texttt{L,H} jsou hranice vymezující pás podél rozhodovací hranice. Parametr \texttt{eta} obsahuje výpočet druhé derivace funkce. Hodnoty \texttt{b,b1,b2}  slouží k výpočtu prahové hodnoty. Hodnoty vektoru \texttt{alphas} Lagrangeovy multiplikátory. Zastavovací podmínka se řídí parametrem \texttt{passes}. Pokud se po průběhum celým vnějším cyklem \texttt{for i = 1:m} nezmění žádný z parametrů \texttt{alphas}, zvedne se hodnota proměnné \texttt{num\_changed\_alphas} o 1. Jakmile je splněna podmínka $passes < max\_passes$, trénování končí a přejde se k zápisu výsledků trénování do proměnné \texttt{model}. Zápis výsledků:
 
 \begin{lstlisting}
 # trainManual.m
@@ -320,10 +320,10 @@ model.alphas = alphas;
 model.w = ((alphas.*Y)'*X)';
 \end{lstlisting}
 
-\noindent V modelu hodnota \texttt{model.Y} představuje odpovědi učitele. Hodnota \texttt{model.alphas} je podle teorie $\alpha_i$, což jsou Lagrangeovi multiplikátory. Pole \texttt{model.w} jsou pro nás hodnoty modelovacích parametrů $\Theta$.
+\noindent V modelu hodnota \texttt{model.y} představuje odpovědi učitele. Hodnota \texttt{model.alphas} je podle teorie $\alpha_i$, což jsou Lagrangeovi multiplikátory. Pole \texttt{model.w} jsou pro nás hodnoty modelovacích parametrů $\Theta$.
 
 \subsection{Predikce}
-Predikce výsledků probíhá v modulu \texttt{predictManual.m}. Základem je mít data ve stejném stavu, jako je trénovací množina. Predikovaný prvek nejdíve tedy převedu na číselné hodnoty, pak přeškáluji a nakonec vytvořím vektor podobnosti s ostatními prvky trénovací množiny. Tento vektor vynásobím odpověďmi učitele s hodnotami -1/1. Nakonec vektor ještě přenásobím Lagrangeovými multiplikátory, tzn. parametry $\vec{\alpha}$.
+Predikce výsledků probíhá v modulu \texttt{predictManual.m}. Základem je mít data ve stejném stavu, jako je trénovací množina. Proto úprava validovaných dat probíhá společně s trénovací množinou. Ne vše jde ale dělat najednou. Validovaná data jsou škálována podle maximálních hodnot příznaků trénovací množiny. Výpočet podobnosti je u trénovací množiny mezi prvky samotnými. Pro validační data se počítá podobnost s prvky trénovací množiny. Validační matici vynásobím odpověďmi učitele s hodnotami -1/1. Nakonec matici ještě přenásobím Lagrangeovými multiplikátory, tzn. parametry $\vec{\alpha}$.
 
 \noindent Dostanu desetinné číslo v rozsahu $<-1;1>$. SVM ale musí vracet jasnou odpověď 1 nebo 0. Je-li hodnota predikce větší rovna 0, vrátím jedničku. V opačném případě vracím 0.
 

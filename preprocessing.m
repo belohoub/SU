@@ -2,7 +2,7 @@
 ########## DATA PREPROCESSING ##########
 ########################################
 
-function [f, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma)
+function [fTraining, fValidation, trainingY, validationY] = preprocessing(data, sigma, sizeOfTrainingSet)
 
 # Alone features and drop it from data-set
 featuresOriginal = data(1,:);
@@ -50,59 +50,40 @@ for i = 1:countColumn
   for j = 1:countRow
     tmp = cell2mat(data(j, i));
     if (isnumeric(tmp))
-      trainingSet(j,i) = tmp;
+      trainingSetAll(j,i) = tmp;
     endif
   endfor
 endfor  
 
-# Add mean to missing values in parameter AGE
-meanAge = mean(trainingSet(:,3));
+# Split data to TRAINING_SET and VALIDATION_SET
+countData = numel(trainingSetAll(:,1));
+countTrainingSet = int32(countData / 100 * sizeOfTrainingSet);
 
-for i = 1:countRow
-  if (trainingSet(i, 3) == 0)
-    trainingSet(i, 3) = meanAge;
-  endif
-endfor
+trainingX = trainingSetAll([1:1:countTrainingSet],:);
+validationX = trainingSetAll([countTrainingSet:1:numel(trainingSetAll(:,1))],:);
 
-# Scale all values
+trainingY = y([1:1:countTrainingSet],:);
+validationY = y([countTrainingSet:1:numel(y(:,1))],:);
+
+meanAge = mean(trainingX(:,3));
+
 for i = 1:countColumn
-   maxFeature(i) = max(trainingSet(:,i));
-endfor  
+   maxFeature(i) = max(trainingX(:,i));
+endfor 
 
-scaledTrainingSet = scale(trainingSet, countRow, countColumn, maxFeature);
+# Scale matrices
+scaledTrainingX = validationTrainingUpdate(trainingX, meanAge, maxFeature);
+scaledValidationX = validationTrainingUpdate(validationX, meanAge, maxFeature);
 
-# Compute similarity
-fprintf('\nSimilarity ...');
-dots = 14;
+# Compute matrices of similarity
+fprintf("\nTraining set compute:\n");
+fTraining = similarity(scaledTrainingX, scaledTrainingX, sigma);
 
-for i = 1:countRow
-  for j = 1:countRow
-    # sample X
-    x1 = scaledTrainingSet(i,:);
-    # landmark
-    x2 = scaledTrainingSet(j,:);
-    
-    # similarity matrix
-    f(i,j) = gaussianKernel(x1, x2, sigma);
-  end
-  
-  fprintf('.');
-  dots = dots + 1;
-  if dots > 78
-      dots = 0;
-      fprintf('\n');
-  end
-  if exist('OCTAVE_VERSION')
-      fflush(stdout);
-  end
-  
-end
+fprintf("\nValidation set compute:\n");
+fValidation = similarity(scaledTrainingX, scaledValidationX, sigma);
 
-fprintf(' Done! \n\n');
-
-# Added f_0 feature
-f = [ones(rows(f),1),f];
-f = [ones(1,columns(f));f];
-y = [ones(1,columns(y));y];
+# Split teachers answers
+trainingY = [ones(1,columns(trainingY));trainingY];
+validationY = [ones(1,columns(validationY));validationY];
 
 end
