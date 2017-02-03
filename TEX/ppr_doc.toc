@@ -4,20 +4,20 @@
 \contentsline {section}{\numberline {2}Teoretick\IeC {\'y} \IeC {\'u}vod}{4}{section.2}
 \contentsline {subsection}{\numberline {2.1}Support Vector Machines}{4}{subsection.2.1}
 \contentsline {subsubsection}{\numberline {2.1.1}Line\IeC {\'a}rn\IeC {\'\i } rozhodovac\IeC {\'\i } hranice}{5}{subsubsection.2.1.1}
-\contentsline {subsubsection}{\numberline {2.1.2}Cenov\IeC {\'a} funkce line\IeC {\'a}rn\IeC {\'\i } hranice}{6}{subsubsection.2.1.2}
+\contentsline {subsubsection}{\numberline {2.1.2}Cenov\IeC {\'a} funkce}{6}{subsubsection.2.1.2}
 \contentsline {subsubsection}{\numberline {2.1.3}Neline\IeC {\'a}rn\IeC {\'\i } rozhodovac\IeC {\'\i } hranice}{7}{subsubsection.2.1.3}
-\contentsline {subsubsection}{\numberline {2.1.4}Cenov\IeC {\'a} funkce neline\IeC {\'a}rn\IeC {\'\i } hranice}{7}{subsubsection.2.1.4}
+\contentsline {subsubsection}{\numberline {2.1.4}Cenov\IeC {\'a} funkce s j\IeC {\'a}dry}{8}{subsubsection.2.1.4}
 \contentsline {subsection}{\numberline {2.2}Sequential minimal optimization}{8}{subsection.2.2}
 \contentsline {section}{\numberline {3}Implementace}{10}{section.3}
-\contentsline {subsection}{\numberline {3.1}P\IeC {\v r}\IeC {\'\i }prava dat}{10}{subsection.3.1}
-\contentsline {subsubsection}{\numberline {3.1.1}Anal\IeC {\'y}za a \IeC {\v c}i\IeC {\v s}t\IeC {\v e}n\IeC {\'\i }}{10}{subsubsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1}P\IeC {\v r}\IeC {\'\i }prava dat}{11}{subsection.3.1}
+\contentsline {subsubsection}{\numberline {3.1.1}Anal\IeC {\'y}za a \IeC {\v c}i\IeC {\v s}t\IeC {\v e}n\IeC {\'\i }}{11}{subsubsection.3.1.1}
 \contentsline {subsubsection}{\numberline {3.1.2}Konverze}{11}{subsubsection.3.1.2}
-\contentsline {subsection}{\numberline {3.2}Tr\IeC {\'e}nov\IeC {\'a}n\IeC {\'\i }}{11}{subsection.3.2}
-\contentsline {subsubsection}{\numberline {3.2.1}\IeC {\v S}k\IeC {\'a}lov\IeC {\'a}n\IeC {\'\i } a matice podobnosti}{11}{subsubsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2}Tr\IeC {\'e}nov\IeC {\'a}n\IeC {\'\i }}{12}{subsection.3.2}
+\contentsline {subsubsection}{\numberline {3.2.1}\IeC {\v S}k\IeC {\'a}lov\IeC {\'a}n\IeC {\'\i } a matice podobnosti}{12}{subsubsection.3.2.1}
 \contentsline {subsubsection}{\numberline {3.2.2}Minimalizace cenov\IeC {\'e} funkce}{12}{subsubsection.3.2.2}
+\contentsline {subsection}{\numberline {3.3}Predikce}{13}{subsection.3.3}
 \contentsline {section}{\numberline {4}Z\IeC {\'a}v\IeC {\v e}r}{14}{section.4}
 \contentsline {section}{\numberline {5}U\IeC {\v z}ivatelsk\IeC {\'a} p\IeC {\v r}\IeC {\'\i }ru\IeC {\v c}ka}{14}{section.5}
 \contentsline {subsubsection}{\numberline {5.0.1}Po\IeC {\v z}adavky}{14}{subsubsection.5.0.1}
 \contentsline {subsubsection}{\numberline {5.0.2}Na\IeC {\v c}ten\IeC {\'\i } dat}{14}{subsubsection.5.0.2}
-\contentsline {subsubsection}{\numberline {5.0.3}Spu\IeC {\v s}t\IeC {\v e}n\IeC {\'\i }}{15}{subsubsection.5.0.3}
-\contentsline {section}{\numberline {6}Testov\IeC {\'a}n\IeC {\'\i }}{16}{section.6}
+\contentsline {subsubsection}{\numberline {5.0.3}Spu\IeC {\v s}t\IeC {\v e}n\IeC {\'\i }}{14}{subsubsection.5.0.3}

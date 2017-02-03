@@ -5,22 +5,22 @@
 data = settings();
 fprintf('### Load data and prepare environment ...\n');
 
-input ("Choose SIGMA: ");
+input("Choose SIGMA: ");
 sigma = ans;
-input ("Choose C: ");
-C = ans;
+input("Choose C: ");
+C = ans; 
 
 fprintf('### Preprocessing ...\nPress ENTER to continue ...\n');
-#pause();
-[f_matrix, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma);
+pause();
+[f, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma);
 
 fprintf('### Train via MANUAL GAUSS KERNEL ...\nPress ENTER to continue ...\n');
-#pause();
-model = trainManual(f_matrix, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma), 1e-3, 20);
+pause();
+model = trainManual(f, y, C, @(x1, x2) gaussianKernel(x1, x2, sigma), 1e-3, 20);
 
 fprintf('### Compute statistics for training set ...\nPress ENTER to continue ...\n');
-#pause();
-stats = statistics(model, y, f_matrix)
+pause();
+stats = statistics(model, y, f)
 
 #fprintf('### Predict new value ...\nPress ENTER to continue ...\n');
 #pause();

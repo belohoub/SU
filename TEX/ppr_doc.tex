@@ -68,13 +68,13 @@
 \newpage
 
 \section{Zadání}
-Navrhněte téma zadání semestrální práce související s oblastí strojového učení. Cílem práce je prohloubit znalosti studenta v oblasti kognititvníchsystémů pomocí nabytých zkušeností ze semetrální práce.
+Navrhněte téma zadání semestrální práce související s oblastí strojového učení. Cílem práce je prohloubit znalosti studenta v oblasti kognititvních systémů pomocí nabytých zkušeností ze semetrální práce.
 
 \subsection{Vybrané zadání}
-Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{SVM}, který bude skrze osobní údaje pasažérů lodi Titanic klasifikovat, zda daná osoba přežije či nepřežije potopení lodi. Dále se pokuste najít souvislosti mezi jednotlivými údaji o pasažérech a z nich zjistit či odvodit, které mají na přežití největší vliv. Data obsahují následující příznaky:
+Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{SVM}, který bude skrze osobní údaje pasažérů lodi Titanic klasifikovat, zda daná osoba přežije či nepřežije potopení lodi. Data obsahují následující příznaky:
 
 \begin{enumerate}
-	\item survived : přežil/nepřežil (0=nepřežil, 1=přežil)
+	\item survived : přežil/nepřežil (1/0)
 	\item pclass : socio-ekonomická třída pasažéra (1=vyšší, 2=střední, 3=nižší)
 	\item name : jméno
 	\item sex : pohlaví
@@ -90,45 +90,45 @@ Sestrojte klasifikátor \textit{Support Vector Machines}, dále už jen \textit{
 \begin{figure}[!ht]
 	\centering
 		\includegraphics[scale=0.25]{images/svm_vectors}
-	\caption{Maximální pás bez bodů trénovací množiny \cite{svm_vectors}}
+	\caption{Maximální pás bez bodů trénovací množiny \cite{svm_wiki}}
 	\label{fig:svm_vectors}
 \end{figure}
 
 \section{Teoretický úvod}
 
 \subsection{Support Vector Machines}
-Algoritmy strojového se skládají z \textit{trénovací množiny} a \textit{rozhodovací hranice}. Rozhodovací hranici můžeme též nazývat \textit{hypotéza}. Trénovací množina může obsahovat i správné odpovědi. Algoritmy tedy dělíme na \textit{učení s učitelem} (máme odpovědi) a \textit{učení bez učitele} (nemáme odpovědi).
+Algoritmy strojového se skládají z \textit{trénovací množiny} a \textit{rozhodovací hranice}. Rozhodovací hranici můžeme též nazývat \textit{hypotéza}. Algoritmy tedy dělíme na \textit{učení s učitelem} (máme odpovědi) a \textit{učení bez učitele} (nemáme odpovědi).
 \\\\
-Každý vzorek \textbf{x} trénovací množiny je tvořen množinou příznaků $${x_1,x_2,...x_n},$$kde \textit{n} je počet příznaků. Hypotéza má tvar \textit{h:x->y} což znamená, že hypotéza je zobrazení \textit{x} do \textit{y}. Hypotézu tvoří modelovací parametry $$\Theta_{n},$$které nám umožňují nastavit rozumnou rozhodovací hranici. Jejich hodnoty předem neznáme a získáme je trénováním.
+Každý vzorek $\vec{x}$ trénovací množiny je tvořen množinou příznaků $$\vec{x} = [x_1,x_2,...x_n],$$kde \textit{n} je počet příznaků. Hypotéza má tvar $h:x \rightarrow y$ což znamená, že hypotéza je zobrazení \textit{x} do \textit{y}. Hypotézu tvoří modelovací parametry $$\vec{\Theta},$$které nám umožňují nastavit rozumnou rozhodovací hranici. Jejich hodnoty předem neznáme a získáme je trénováním.\cite{andrew},\cite{svm_zcu}
 
 \subsubsection{Lineární rozhodovací hranice}
-Metoda strojového učení, která hledá v trénovací množině umístění optimální nadroviny. Tato nadrovina slouží k rozdělení bodů projekce na dvě třídy. V tomto rozdělení je požadováno aby minimum vzdáleností bodů od této nadroviny bylo co největší. Chceme tedy, aby nadrovina měla po obou stranách co nejširší pás bez bodů. K popisu těchto pásů slouží pomocné vektory (\textit{Support Vectors}) (viz Obr.:\ref{fig:svm_vectors}).
+SVM je metoda strojového učení, která hledá v trénovací množině umístění optimální nadroviny. Tato nadrovina slouží k rozdělení bodů projekce na dvě třídy. V tomto rozdělení je požadováno aby minimum vzdáleností bodů od této nadroviny bylo co největší. Chceme tedy, aby nadrovina měla po obou stranách co nejširší pás bez bodů. K popisu těchto pásů slouží pomocné vektory (\textit{Support Vectors}) (viz Obr.:\ref{fig:svm_vectors}).
 \cite{svm_zcu}
 
-\subsubsection{Cenová funkce lineární hranice}
+\subsubsection{Cenová funkce}
 Metoda SVM je vylepšenou verzí \textit{logistické regrese}. Ovšem, na rozdíl od cenové funkce logistické regrese nám SVM nevrací pravděpodobnost, ale rovnou příslušnost klasifikovaného vzorku k třídě 1 nebo 0. Zde vidíme \textit{cenovou funkci} logistické regrese:
 
-$$\min_{\theta} \frac{1}{m}[\sum_{i=1}^{m}y^{(i)}(-\log h_{\theta}(x^{(i)}))+(1-y^{(i)})(-\log(1-h_{\theta}(x^{(i)})))]+\frac{\lambda}{2m}\sum_{j=1}^{n}\theta_{j}^{2}$$
+$$\min_{\vec{\Theta}} \frac{1}{m}[\sum_{i=1}^{m}y^{(i)}(-\log h_{\vec{\Theta}}(x^{(i)}))+(1-y^{(i)})(-\log(1-h_{\vec{\Theta}}(x^{(i)})))]+\frac{\lambda}{2m}\sum_{j=1}^{n}\Theta_{j}^{2}.$$
 
-Cenová funkce SVM pak vypadá následovně:
+\noindent Cenová funkce SVM pak vypadá následovně:
 
-$$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T x^{(i)})+(1-y^{(i)}) Cost_0 (\theta^T x^{(i)})] + \frac{1}{2} \sum_{j=1}^{n}\theta_{j}^{2},$$
+$$\min_{\vec{\Theta}} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\vec{\Theta}^T x^{(i)})+(1-y^{(i)}) Cost_0 (\vec{\Theta}^T x^{(i)})] + \frac{1}{2} \sum_{j=1}^{n}\Theta_{j}^{2},$$
 
-kde \textit{Cost} funkce pro y = 1 je
+\noindent kde $Cost_1$ funkce pro y = 1 je
 
-$$\log\frac{1}{1 + e^{-\Theta^{T}x}}$$
+$$\log(\frac{1}{1 + e^{-\Theta^{T}x}})$$
 
-a funkce \textit{Cost} funkce pro y = 0 je
+\noindent a funkce $Cost_0$ funkce pro y = 0 je
 
 $$\log(1-\frac{1}{1 + e^{-\Theta^{T}x}}).$$
 
-Optimalizací cenové funkce získáme hodnoty parametrů $\Theta$, které určují tvar hypotézy.
+\noindent Optimalizací cenové funkce získáme hodnoty parametrů $\vec{\Theta}$, které určují tvar hypotézy.
 \\\\
-Hodnota \textit{C} je regularizační faktor, který ovlivňuje výběr hypotézy. Rozumně vybraná hodnota pak umožní dělat ve výběru hypotézy kompromisy v extrémních případech rodělení tříd v trénovací množině:
+Hodnota $C$ je regularizační faktor, který ovlivňuje výběr hypotézy. Rozumně vybraná hodnota pak umožní dělat ve výběru hypotézy kompromisy v extrémních případech rodělení tříd v trénovací množině:
 
 \begin{enumerate}
-	\item C - vysoké = malá odchylka, velký rozptyl (malá $\lambda$), hrozí \textit{overfitting}
-	\item C - malé = velká odchylka, malý rozptyl (velká $\lambda$), hrozí \textit{undefitting}
+	\item $C$ - vysoké = malá odchylka, velký rozptyl (malá $\lambda$), hrozí \textit{overfitting}
+	\item $C$ - malé = velká odchylka, malý rozptyl (velká $\lambda$), hrozí \textit{undefitting}
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -139,25 +139,34 @@ Hodnota \textit{C} je regularizační faktor, který ovlivňuje výběr hypotéz
 \end{figure}
 
 \subsubsection{Nelineární rozhodovací hranice}
-Máme-li trénovací množinu, pro kterou je rozhodovací hranice nelineární (viz. Obr.:\ref{fig:linear_nonlinear}), musíme použít metodu jader (\textit{Kernels}). Zavedeme si \textit{i} pomocných bodů tzv. \textit{landmarky}. Každý landmark $l^{(i)}$ nese hodnotu třídy, do které patří. Ke každému prvku $x^{(n)}$ trénovací množiny spočteme podobnost $f_{i}$ s každým landmarkem $l^{(i)}$. Pro každý prvek trénovací množiny tak dostaneme vektor podobnosti $f^{(n)}$. Podobnost počítáme následovně:
+Máme-li trénovací množinu, pro kterou je rozhodovací hranice nelineární (viz. Obr.:\ref{fig:linear_nonlinear}), musíme použít metodu jader (\textit{Kernels}). Zavedeme si \textit{i} pomocných bodů tzv. \textit{landmarky}. Každý landmark $\vec{l^{(i)}}$ nese hodnotu vzdálenosti od ostatních prvků trénovací množiny. Ke každému prvku $\vec{x^{(m)}}$ trénovací množiny spočteme podobnost $f_{i}$ s každým landmarkem $\vec{l^{(i)}}$. Pro každý prvek trénovací množiny tak dostaneme vektor podobnosti $\vec{f^{(m)}}$. Podobnost počítáme následovně:
 
-$$f_{i}(x^{(n)},l^{(i)}) = exp(-\frac{||x^{(n)} - l^{(i)}||}{2\sigma^2})$$
+$$f_{i}(\vec{x^{(m)}},\vec{l^{(i)}}) = exp(-\frac{||\vec{x^{(m)}} - \vec{l^{(i)}}||}{2\sigma^2})$$
 
-\noindent vektor podobnosti pak bude vypadat:
+\noindent a vektor podobnosti pak bude vypadat:
 
-$$f^{(n)} = [f_{1},f_{2},f_{3},...,f_{i}]$$
+$$\vec{f^{(m)}} = [f_{1},f_{2},f_{3},...,f_{i}].$$
 
 \noindent Jádrem se nazývá funkce počítání podobnosti. V tomto případě je jádro \textit{Gaussové}. Parametr \textit{sigma} nám určuje míru podobnosti. Máme i jiné funkce jádra jako například \textit{Polynomiální} nebo \textit{Lineární}. Lineární jádro je předchozí případ lineárně separabilních dat.\cite{svm_robots},\cite{svm_wiki}
 
-\subsubsection{Cenová funkce nelineární hranice}
+\begin{figure}[!ht]
+	\centering
+		\includegraphics[width=\textwidth]{images/sigma}
+	\caption{Míra podobnosti v závislosti na parametru $\sigma$.\cite{svm_zcu}}
+	\label{fig:sigma}
+\end{figure}
+
+\noindent Podobnost se určuje na grafu podobnosti (viz Obr.:\ref{fig:sigma}) tak, že čím je zkoumaný prvek blíže globálnímu maximu gaussovského klobouku, tím míra podobnosti narůstá. Jak moc je graf špičatý, či plochý závisí právě na parametru $\sigma$.
+
+\subsubsection{Cenová funkce s jádry}
 Při použití gaussového jádra máme předpočítaný vektor podobnosti pro každý prvek trénovací množiny. To znamená, že vektor podobnosti může reprezentovat daný prvek trénovací množiny. Cenouvou funkci tedy můžeme pozměnit do tvaru:
 
-$$\min_{\theta} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\theta^T f^{(i)})+(1-y^{(i)}) Cost_0 (\theta^T f^{(i)})] + \frac{1}{2} \sum_{j=1}^{n}\theta_{j}^{2}$$
+$$\min_{\vec{\Theta}} C \sum_{i=1}^{m}[y^{(i)} Cost_1 (\Theta^T \vec{f^{(i)}})+(1-y^{(i)}) Cost_0 (\Theta^T \vec{f^{(i)}})] + \frac{1}{2} \sum_{j=1}^{n}\Theta_{j}^{2}.$$
 
-Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými příznaky. Je dobré příznakový vektor nejdříve naškálovat a až poté počítat cenovou funkci.
+\noindent Pozor, gaussové jádro je citlivé na velké rozdíly hodnot mezi jednotlivými příznaky. Je dobré příznakový vektor nejdříve naškálovat a až poté počítat cenovou funkci.
 
 \subsection{Sequential minimal optimization}
-SMO je algoritmus objevený Johnem Plattem v roce 1998. Tento algoritmus se osvědčil v SVM když jím nahradíme klasickou cenovou funkci. Za pomoci \textit{Lagrangoevých multiplikátorů} můžeme říct, že $\theta(\alpha)=\sum_{i}\alpha_{i}y_{i}z_{i}$, kde $\alpha_i$ jsou Lagrangeovy multiplikátory a $z_{i}=\phi(x_{i})$.
+SMO je algoritmus objevený Johnem Plattem v roce 1998. Tento algoritmus se osvědčil v SVM když jím nahradíme klasickou cenovou funkci. Za pomoci \textit{Lagrangoevých multiplikátorů} můžeme říct, že $\Theta(\alpha)=\sum_{i}\alpha_{i}y_{i}z_{i}$, kde $\alpha_i$ jsou Lagrangeovy multiplikátory a $z_{i}=\phi(x_{i})$.
 \\\\
 Platt toto vylepšení poté využije jako:
 $$
@@ -165,28 +174,28 @@ F_i =w(\alpha) . z_i - y_i = \sum_{j}\alpha_{j}y_{j}k(x_i,x_j)-y_{i},
 $$
 kde $k(x_i,x_j)$ je jádro. Dostáváme tvar parciální derivace:
 $$
-L = \frac{1}{2}w(\alpha).w(\alpha)-\sum_{i}\alpha_{i}-\sum_{i}\alpha_{i}\delta_{i}+\sum_{i}\mu_{i}(\alpha_{i}-C)-\beta\sum_{i}\alpha_{i}y_{i}
+L = \frac{1}{2}w(\alpha).w(\alpha)-\sum_{i}\alpha_{i}-\sum_{i}\alpha_{i}\delta_{i}+\sum_{i}\mu_{i}(\alpha_{i}-C)-\beta\sum_{i}\alpha_{i}y_{i},
 $$
 $$
-\frac{\partial L}{\partial \alpha_{i}}=(F_{i}-\beta)y_{i}-\delta_{i}+\mu_{i}=0
+\frac{\partial L}{\partial \alpha_{i}}=(F_{i}-\beta)y_{i}-\delta_{i}+\mu_{i}=0.
 $$
 Podle \textit{Karush-Kuhn-Tucker (KKT)} dostaneme podmínky, které musí daný výraz splňovat:
 $$
-(F_i-\beta)y_{i}>=-\tau => \alpha_{i} = 0
+(F_i-\beta)y_{i} \geq -\tau \Rightarrow \alpha_{i} = 0,
 $$
 $$
-|(F_i-\beta)|<=\tau => 0 < \alpha_{i} < C
+|(F_i-\beta)| \leq \tau \Rightarrow 0 < \alpha_{i} < C,
 $$
 $$
-(F_i-\beta)y_{i}<=\tau => \alpha_{i} = C
+(F_i-\beta)y_{i} \leq \tau \Rightarrow \alpha_{i} = C.
 $$
 Platt poté definuje výstupní chybu i-tého prvku jako:
 $$
 E_{i} = F_{i} - \beta,
 $$
-kde $\beta$ je prahový paramter. V Plattově pseudokódu po určení chyby vybíráme dva indexy $i_1$ a $i_2$ pro výběr multiplikátorů $\alpha_{i_1}$ a $\alpha_{i_2}$. Metody, jak správně vybrat indexy, jsou popsány v originálním článku z roku 1998. Celý algoritmu tedy funguje ve dvou smyčkách. Vnější smyčka vybírá index $i_2$ a pro index $i_2$ vybírá vnitřní smyčka index $i_1$.
+kde $\beta$ je prahový paramter. V Plattově pseudokódu po určení chyby vybíráme dva indexy $i_1$ a $i_2$ pro výběr multiplikátorů $\alpha_{i_1}$ a $\alpha_{i_2}$. Metody, jak správně vybrat indexy, jsou popsány v originálním článku z roku 1998. Celý algoritmus tedy funguje ve dvou smyčkách. Vnější smyčka vybírá index $i_2$ a pro index $i_2$ vybírá vnitřní smyčka index $i_1$.
 \\\\
-Vnější smyčka jde přes všechny prvky trénovací množiny, které narušily podmínky optimality. Nejprve pouye přes ty, které nanerušili horní ani dolní hranici. Každém průběhu, je-li to vyžadováno, je chyba $E_i$ aktualizována.\cite{smo_platt},\cite{andrew}
+Vnější smyčka jde přes všechny prvky trénovací množiny, které narušily podmínky optimality. Nejprve pouze přes ty, které nanerušili horní ani dolní hranici. V každém průběhu, je-li to vyžadováno, je chyba $E_i$ aktualizována.\cite{smo_platt},\cite{andrew}
 
 \noindent Dále je nutné si spočítat horní a dolní hranici. Pokud se $y_{i_1}$ nerovná $y_{i_2}$ pak:
 $$
@@ -194,21 +203,21 @@ L=max(0,\alpha_2 - \alpha_1) ; H=min(C, C+\alpha_2 - \alpha_1)
 $$
 jinak:
 $$
-L=max(0,\alpha_2 + \alpha_1 - C) ; H=min(C, \alpha_2 + \alpha_1)
+L=max(0,\alpha_2 + \alpha_1 - C) ; H=min(C, \alpha_2 + \alpha_1).
 $$
 
 \noindent Druhá derivace cílové funkce podél diagonály může být vyjádřena jako:
 
 $$
-\eta=K(\vec{x_1},\vec{x_1}) + K(\vec{x_2},\vec{x_2}) -2K(\vec{x_1},\vec{x_2})
+\eta=K(\vec{x_1},\vec{x_1}) + K(\vec{x_2},\vec{x_2}) -2K(\vec{x_1},\vec{x_2}).
 $$
 
 \noindent Za normálních okolností bude cílová funkce pozitivně definitní, bude existovat
-minimum ve směru lineárního omezení rovnosti, a $\eta$ bude větší než nula. V
-tomto případě, SMO vypočítá minimum ve směru omezení:
+minimum ve směru lineárního omezení rovnosti a $\eta$ bude větší než nula. V
+tomto případě SMO vypočítá minimum ve směru omezení:
 
 $$
-\alpha_{2}^{new,cliped} = \alpha_{2}+\frac{y_{2}(E_{1}-E_{2})}{\eta}
+\alpha_{2}^{new,cliped} = \alpha_{2}+\frac{y_{2}(E_{1}-E_{2})}{\eta}.
 $$
 
 \noindent Teď si vyjádříme $s=y_{1}y_{2}$. Potom se $\alpha_1$ počítá:
@@ -217,37 +226,36 @@ $$
 \alpha_{1}^{new}=\alpha_{1}+s(\alpha_{2}-\alpha_{2}^{new,clipped}).
 $$
 
-\noindent Dále si musíme vytvořit vzorce pro výpočet prahu. Práh $b$ je počítán po každém provedeném vnitřním cyklu. Celkový práh je složen z $b_1$, který  je ovlivněn chybou $E_1$, a $b_2$, který je ovlivněn chybou $E_2$. Následující práh $b_1$ je platný, pokud nová $\alpha_{1}$ není v mezích, protože nutí výstup z SVM být $y_1$, když vstup je $x_1$:
+\noindent Dále si musíme vytvořit vzorce pro výpočet prahu. Práh $\beta$ je počítán po každém provedeném vnitřním cyklu. Celkový práh je složen z $\beta_1$, který  je ovlivněn chybou $E_1$, a $\beta_2$, který je ovlivněn chybou $E_2$. Následující práh $\beta_1$ je platný, pokud nová $\alpha_{1}$ není v mezích, protože nutí výstup z SVM být $y_1$, když vstup je $x_1$:
 
 $$
-b_1=E_1+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_1})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_1},\vec{x_2})+b.
+\beta_1=E_1+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_1})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_1},\vec{x_2})+\beta.
 $$
 
-\noindent Předchozí trvrzení pro $b_1$ platí i pro $b_2$. Následující práh $b_2$ je platný, pokud nová $\alpha_{2}$ není v mezích, protože nutí výstup z SVM být $y_2$, když vstup je $x_2$:
+\noindent Předchozí trvrzení pro $\beta_1$ platí i pro $\beta_2$. Následující práh $\beta_2$ je platný, pokud nová $\alpha_{2}$ není v mezích, protože nutí výstup z SVM být $y_2$, když vstup je $x_2$:
 
 $$
-b_2=E_2+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_2})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_2},\vec{x_2})+b.
+\beta_2=E_2+y_1(\alpha_1^{new}-\alpha_{1})K(\vec{x_1},\vec{x_2})+y_2(\alpha_2^{new}-\alpha_2)K(\vec{x_2},\vec{x_2})+\beta.
 $$
 
-\noindent Pokud oba $b_1$ i $b_2$ jsou platné, jsou si rovny. Když oba nové Lagrangeovy multiplikátory jsou v mezích a pokud L není rovno H, pak se interval mezi $b_1$ a $b_2$ je práh, který je v souladu s podmínkami KKT. SMO zvolí prahovou hodnotu polovinou vzdálenosti mezi $b_1$ a $b_2$.\cite{smo_platt_original}
+\noindent Pokud oba prahy $\beta_1$ i $\beta_2$ jsou platné, jsou si rovny. Když oba nové Lagrangeovy multiplikátory jsou v mezích a pokud L není rovno H, pak interval mezi $\beta_1$ a $\beta_2$ je práh, který je v souladu s podmínkami KKT. SMO zvolí prahovou hodnotu jako polovinu vzdálenosti mezi $\beta_1$ a $\beta_2$.\cite{smo_platt_original}
 
 \section{Implementace}
 Výsledný program je naprogramovaný v matematickém jazyce Octave. Tuto variantu jsem zvolil z důvodu velkého množství matematických operací v úloze. Jelikož výsledný program slouží pouze k vyzkoušení dané problematiky, je tento jazyk optimální pro jeho realizaci.
 \\\\
-Program se spouští v hlavní části \texttt{main.m}. Hlavní část je pak rozdělena na \texttt{settings.m, preprocessing.m}, \texttt{trainManual.m}, \texttt{predictManual.m}, \texttt{statistics.m} a \texttt{evaluateSample.m}.
+Program má hlavní část \texttt{main.m}. Ta je pak rozdělena na \texttt{settings.m, preprocessing.m}, \texttt{trainManual.m}, \texttt{predictManual.m}, \texttt{statistics.m} a \texttt{evaluateSample.m}.
 
 \subsection{Příprava dat}
 Před načtením dat jsem analyzoval jednotlivé příznaky všech prvků trénovací množiny pomocí programu \textit{Weka-3.8.1}.
 
 \subsubsection{Analýza a čištění}
 
-Příprava prostředí, načtení a čištění dat probíhá v částech settings.m a preprocessing.m. Po prozkoumání jednotlivých příznaků jsem zjistil, že sloupce \textit{embarked, cabin} a \textit{age} mají některá pole nevyplněná. V příznaku embarked chybí 2 hodnoty, proto je jednodušší tyto řádku smazat než vymýšlet postup nahrazení. Naopak příznaku cabin chybí 
-687 z 891, což je 77\%. Pokud bychom chtěli tyto mezery v datech nahradit například střední hodnotou nebo generátorem náhodných čísel, výsledné zkreslení hypotézy by bylo příliš velké a stala by se tato operace spíše nevýhodou. Proto sloupec cabin odstraníme úplně. Posledním příznakem s chybějícími hodnotami je age. Zde chybí 177 z 891, což je 20\%. To není zase tak mnoho, chybějící hodnoty nahradím střdními hodnotami příznaku. Výslednou hypotézu mi to může zkreslit, ale myslím si že ne tolik, jako by se tomu stalo v případě příznaku cabin.
+Příprava prostředí, načtení a čištění dat probíhá v částech settings.m a preprocessing.m. Po prozkoumání jednotlivých příznaků jsem zjistil, že sloupce \textit{embarked, cabin} a \textit{age} mají některá pole nevyplněná. V příznaku \textit{embarked} chybí 2 hodnoty, proto je jednodušší tyto řádky smazat než vymýšlet postup nahrazení. Naopak příznaku \textit{cabin} chybí 687 záznamů z 891, což je 77\%. Pokud bychom chtěli tyto mezery v datech nahradit například střední hodnotou nebo generátorem náhodných čísel, výsledné zkreslení hypotézy by bylo příliš velké a stala by se tato operace spíše nevýhodou. Proto sloupec \textit{cabin} odstraníme úplně. Posledním příznakem s chybějícími hodnotami je \textit{age}. Zde chybí 177 záznamů z 891, což je 20\%. To není zase tak mnoho, chybějící hodnoty nahradím střední hodnotou příznaku. Výslednou hypotézu mi to může zkreslit, ale myslím si že ne tolik, jako by se tomu stalo v případě příznaku \textit{cabin}.
 \\\\
-Příznak cabin bych odstranil i z jiného důvodu. Sice obsahuje pouze 147 hodnot, ale z toho je 101 unikátních. Pokud mám velké množství unikátních hodnot, výsledný sloupec mi poté slouží jako množina identifikátorů. Identifikátory do trénovací množiny nepřináší žádnou přidanou hodnotu a jsou tudíž zbytečné. Odstraním tedy i sloupec name, který je jednoznačným identifikátorem, protože má 100\% unikátních hodnot.
+Příznak \textit{cabin} bych odstranil i z jiného důvodu. Sice obsahuje pouze 147 hodnot, ale z toho je 101 unikátních. Pokud mám velké množství unikátních hodnot, výsledný sloupec mi poté slouží jako množina identifikátorů. Identifikátory do trénovací množiny nepřináší žádnou přidanou hodnotu a jsou tudíž zbytečné. Odstraním tedy i sloupec \textit{name}, který je jednoznačným identifikátorem, protože má 100\% unikátních hodnot.
 
 \subsubsection{Konverze}
-Jelikož nejsou všechny příznaky číselné hodnoty, je nutné je konvertovat. Patří sem sloupce age, ticket a embarked. U sloupců ticket a embarked nevím, jaké jiné hodnoty se zde mohou vyskytovat, takže převod na určitou řadu čísel zde nejde použít. Znaky každé buňky tedy převedu podle \texttt{ASCII} tabulky na znaky a sečtu. Náhled konverze pro sloupec embraked:
+Jelikož nejsou všechny příznaky číselné hodnoty, je nutné je konvertovat. To platí pro sloupce \textit{age}, \textit{ticket} a \textit{embarked}. U sloupců \textit{ticket} a \textit{embarked} nevím, jaké jiné hodnoty se zde mohou vyskytovat, takže přiřadit jednotlivým slovům unikátní číselný identifikátor nejde použít. Znaky každé buňky tedy převedu podle \texttt{ASCII} tabulky na celočíselnou hodnotu a sečtu. Náhled konverze pro sloupec \textit{embraked}:
 
 \begin{lstlisting}
 # preprocessing.m
@@ -258,27 +266,14 @@ for i = 1:countRow
 endfor
 \end{lstlisting}
 
-\noindent Příznak sex lze konertovat tak, aby jsme z toho dostaly lepší hodnotu. Jelikož víme, že pohlaví u lidí jsou pouze dvě, převedeme hodnoty \texttt{male} a \texttt{female} na binární klasifikaci, tedy hodnoty 0 a 1. Převod vypadá následovně:
-
-\begin{lstlisting}
-# preprocessing.m
-# line 26 
-# Convert MALE/FEMALE to BINARY
-for i = 1:countRow
-  if (strcmpi(data(i, 2), 'female'))
-    data(i, 2) = 1;
-  else
-    data(i, 2) = 0;
-  endif
-endfor
-\end{lstlisting}
+\noindent Příznak \textit{sex} lze konertovat na binární klasifikátor. Jelikož víme, že pohlaví u lidí jsou pouze dvě, převedeme hodnoty \texttt{male} a \texttt{female} na binární hodnotu, tedy na 0 a 1.
 
 \subsection{Trénování}
 \subsubsection{Škálování a matice podobnosti}
-Před trénováním jsou data ještě škálována aby se srazili rozdíly mezi jednotlivými příznaky a došlo tak ke správnému natrénování. Příznaky se škálují odečtením maxima příznaku přes všechny vzorky trénovací množiny.
+Před trénováním jsou data ještě škálována aby se srazili rozdíly mezi jednotlivými příznaky a došlo tak ke správnému natrénování. Příznaky se škálují odečtením maxima příznaku přes všechny vzorky trénovací množiny
 
 $$
-s_{n}^{i} = x_{n}^{i} - \max_{i} x_{n} \,;\, i \in <1;m>
+s_{n}^{i} = x_{n}^{i} - \max_{i} x_{n} \,;\, i \in <1;m>.
 $$
 
 \noindent Kód škálování pak vypadá následovně:
@@ -293,7 +288,7 @@ for i = 1:countColumn
 endfor 
 \end{lstlisting}
 
-\noindent Před začátkem trénování vytvořím matici podobnosti $f$. Jako landmarky označím všechny prvky trénovací množiny. Matice podobnosti tedy bude obsahovat podobnost všech prvků trénovací množiny vůči ostatním prvkům. Matice $f$ bude symetrická. Kód pro výpočet podobnosti je kód gaussového jádra.
+\noindent Před začátkem trénování vytvořím matici podobnosti \texttt{f}. Jako landmarky označím všechny prvky trénovací množiny. Matice podobnosti tedy bude obsahovat podobnost všech prvků trénovací množiny vůči ostatním prvkům. Matice \texttt{f} bude symetrická. Kód pro výpočet podobnosti je kód gaussového jádra.
 
 \begin{lstlisting}
 # gaussianKernel.m
@@ -304,7 +299,7 @@ end
 \end{lstlisting}
 
 \subsubsection{Minimalizace cenové funkce}
-Samotné trénování probíhá v části \texttt{trainManual.m}. Na začátku proběhne nastavení proměnných a změna odpovědí učitele z 0/1 na -1/1. Dává nám to širší rozhodovací pásmo. Učení pak probíhá ve dvou cyklech, vnitřním (pracuje s j-tým prvkem) a vnějším (pracuje s i-tým prvkem). V obou cyklech se počítají výstupní chyby i/j-tého prvku. Ve vnějším se i generuje iteračně přes \texttt{for i = 1:m}, kde \texttt{m} je velikost trénovací množiny, ve vnitřním je výběr j-tého prvku realizován náhodou:
+Samotné trénování probíhá v části \texttt{trainManual.m}. Na začátku proběhne nastavení proměnných a změna odpovědí učitele z 0/1 na -1/1. Dává nám to širší rozhodovací pásmo. Učení pak probíhá ve dvou cyklech, \textit{vnitřním} (pracuje s j-tým prvkem) a \textit{vnějším} (pracuje s i-tým prvkem). V obou cyklech se počítají výstupní chyby i/j-tého prvku. Ve vnějším se \texttt{i} generuje iteračně přes \texttt{for i = 1:m}, kde \texttt{m} je velikost trénovací množiny, ve vnitřním je výběr j-tého prvku realizován náhodou:
 
 \begin{lstlisting}
 # trainManual.m
@@ -315,7 +310,7 @@ while j == i,
 end
 \end{lstlisting}
 
-Dále si podle vzorců z \cite{smo_platt_original} spočítám hodnoty \texttt{L, H, eta, b, b1, b2} a \texttt{alphas}. Zastavovací podmínka se řídí parametrem \texttt{passes}. Pokud se po průběhum celým vnějším cyklem \texttt{for i = 1:m} nezmění žádný z parametrů \texttt{alphas}, zvedne se hodnota proměnné \texttt{num\_changed\_alphas} o 1. Jakmile je splněna podmínka $passes < max_passes$, trénování končí a přejde se k zápisu výsledků trénování do proměnné \texttt{model}. Zápis výsledků:
+\noindent Dále si podle vzorců z \cite{smo_platt_original} spočítám hodnoty \texttt{L, H, eta, b, b1, b2} a \texttt{alphas}. Hodnoty \texttt{L,H} jsou horní a dolní pásmo. Parametr \texttt{eta} je $\eta$ a značí výpočet druhé derivace funkce. Hodnoty \texttt{b,b1,b2} jsou $\beta, \beta_1, \beta_2$ a slouží k výpočtu prahové hodnoty. Hodnoty vektoru \texttt{alphas} jsou $\vec{\alpha}$ a slouží k výpočtu Lagrangeových multiplikátorů. Zastavovací podmínka se řídí parametrem \texttt{passes}. Pokud se po průběhum celým vnějším cyklem \texttt{for i = 1:m} nezmění žádný z parametrů \texttt{alphas}, zvedne se hodnota proměnné \texttt{num\_changed\_alphas} o 1. Jakmile je splněna podmínka $passes < max\_passes$, trénování končí a přejde se k zápisu výsledků trénování do proměnné \texttt{model}. Zápis výsledků:
 
 \begin{lstlisting}
 # trainManual.m
@@ -325,9 +320,19 @@ model.alphas = alphas;
 model.w = ((alphas.*Y)'*X)';
 \end{lstlisting}
 
-V modelu hodnota \texttt{model.Y} představuje odpovědi učitele. Hodnota \texttt{model.alphas} je podle teorie $\alpha_i$, což jsou Lagrangeovi multiplikátory. Pole \texttt{model.w} jsou pro nás hodnoty modelovacích parametrů $\Theta$.
+\noindent V modelu hodnota \texttt{model.Y} představuje odpovědi učitele. Hodnota \texttt{model.alphas} je podle teorie $\alpha_i$, což jsou Lagrangeovi multiplikátory. Pole \texttt{model.w} jsou pro nás hodnoty modelovacích parametrů $\Theta$.
 
-\newpage
+\subsection{Predikce}
+Predikce výsledků probíhá v modulu \texttt{predictManual.m}. Základem je mít data ve stejném stavu, jako je trénovací množina. Predikovaný prvek nejdíve tedy převedu na číselné hodnoty, pak přeškáluji a nakonec vytvořím vektor podobnosti s ostatními prvky trénovací množiny. Tento vektor vynásobím odpověďmi učitele s hodnotami -1/1. Nakonec vektor ještě přenásobím Lagrangeovými multiplikátory, tzn. parametry $\vec{\alpha}$.
+
+\noindent Dostanu desetinné číslo v rozsahu $<-1;1>$. SVM ale musí vracet jasnou odpověď 1 nebo 0. Je-li hodnota predikce větší rovna 0, vrátím jedničku. V opačném případě vracím 0.
+
+\begin{lstlisting}
+# predictManual.m
+# line 27
+pred(p >= 0) =  1;
+pred(p <  0) =  0;
+\end{lstlisting} 
 
 \section{Závěr}
 
@@ -356,7 +361,7 @@ Máme dvě možnosti spuštění:
 
 \begin{enumerate}
 	\item - Octave (GUI) : Máme-li Octave ve verzi s GUI, tak po spuštění programu navedeme Octave do správné složky s programem a spustíme modul \texttt{main.m} (viz Obr.:\ref{fig:runWithGUI})
-	\item - Octave (CLI) : Spouštíte-li Octave v příkazové řádce, je nutné se přesunout do složky programu s moduly a zadat pouze příkaz \texttt{main} (viz Obr.:\ref{fig:runWithoutGUI}.
+	\item - Octave (CLI) : Spouštíme-li Octave v příkazové řádce, je nutné se přesunout do složky programu s moduly a zadat pouze příkaz \texttt{main} (viz Obr.:\ref{fig:runWithoutGUI}.
 \end{enumerate}
 
 \begin{figure}[!ht]
@@ -366,11 +371,9 @@ Máme dvě možnosti spuštění:
 	\label{fig:runWithoutGUI}
 \end{figure}
 
-Dále už průběh pokračuje v obou prostředí stejně. Uživatel stiskem klávesy \texttt{ENTER} načtení a úpravu dat. Jakmile jsou data připravena, spustí se výpočet matice podobnosti indikovaný hláškou \texttt{Similarity ...}. Dokončení výpočtu je značeno hláškou \texttt{... Done!}. Následovně je uživatel vyzván k potvrzení trénování hypotézy. Chvilku se nic neděje, protože se matice podobnosti vektorizuje. Trénování začíná v okamžiku vyskočení hlášky \texttt{Training ...} a dokončení opět poznáme přes \texttt{... Done!}.
+\noindent Dále už průběh pokračuje v obou prostředí stejně. Uživatel stiskem klávesy \texttt{ENTER} spustí načtení a úpravu dat. Jakmile jsou data připravena, spustí se výpočet matice podobnosti indikovaný hláškou \texttt{Similarity ...}. Dokončení výpočtu je značeno hláškou \texttt{... Done!}. Následovně je uživateli vyzván k potvrzení trénování hypotézy. Trénování začíná v okamžiku vyskočení hlášky \texttt{Training ...} a dokončení opět poznáme přes \texttt{... Done!}.
 \\\\
-Program tedy přejde k výpočtu statistik a zobrazí uživatel v procentech, jak moc hypotéza natrénovaná pomocí křížové validace.
-
-\section{Testování}
+Program tedy přejde k výpočtu statistik a zobrazí uživatel v procentech, jak moc hypotéza natrénovaná.
 
 \appendix
 \begin{thebibliography}{99}
@@ -381,7 +384,7 @@ EKŠTEIN, Kamil. \textit{Support Vector Machines} [online]. Plzeň, 2012 [cit. 2
 \bibitem{andrew}
 NG, Andrew. \textit{CS229 Lecture notes - SVM} [online]. Standford, 2016 [cit. 2017-01-31]. Dostupné z: \url{http://cs229.stanford.edu/notes/cs229-notes3.pdf}. Přednášky k předmětu Machine Learning - CS229. Stanford University.
 
-\bibitem{andrew}
+\bibitem{andrew_new}
 NG, Andrew. \textit{Support Vector Machines} [online]. Standford, 2016 [cit. 2017-01-31]. Dostupné z: \url{https://d3c33hcgiwev3.cloudfront.net/_246c2a4e4c249f94c895f607ea1e6407_Lecture12.pdf?Expires=1485993600&Signature=MGhCSj6vnfSMVWpDERGUz8fc2312duxtjEpe2o4R0vhRA9KQQuPnZOPulQy5I0mCrICpxj3M0efelTXkmFFQsKB8VaVCYc0v7qPGH1pnWnL6WdQ1CEkpGAu~i3NfLItowu0Ge3C885eDXuSYBGmDGLUh83obXuukWx9ALN6J5yQ_&Key-Pair-Id=APKAJLTNE6QMUY6HBC5A}. Přednášky k předmětu Machine Learning. Stanford University.
 
 \bibitem{svm_wiki}

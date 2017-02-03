@@ -2,7 +2,7 @@
 ########## DATA PREPROCESSING ##########
 ########################################
 
-function [f_matrix, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma)
+function [f, scaledTrainingSet, y, countRow, maxFeature] = preprocessing(data, sigma)
 
 # Alone features and drop it from data-set
 featuresOriginal = data(1,:);
@@ -83,7 +83,7 @@ for i = 1:countRow
     x2 = scaledTrainingSet(j,:);
     
     # similarity matrix
-    f_matrix(i,j) = gaussianKernel(x1, x2, sigma);
+    f(i,j) = gaussianKernel(x1, x2, sigma);
   end
   
   fprintf('.');
@@ -98,9 +98,11 @@ for i = 1:countRow
   
 end
 
-# Added f_0 feature
-scaledTrainingSet = [ones(size(scaledTrainingSet, 1), 1) scaledTrainingSet];
-
 fprintf(' Done! \n\n');
+
+# Added f_0 feature
+f = [ones(rows(f),1),f];
+f = [ones(1,columns(f));f];
+y = [ones(1,columns(y));y];
 
 end
