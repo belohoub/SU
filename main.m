@@ -13,7 +13,7 @@ input("Choose C: ");
 C = ans; 
 # Input size of TRAINING SET
 fprintf("Split data to training set and validation set!\n");
-input("Choose size of training se in \'%\':");
+input("Choose size of training set in \'%\':");
 sizeOfTrainingSet = ans;
 
 ########## PREPROCESSING
